@@ -36,7 +36,7 @@ const Home = () => {
           <HiMenu
             fontSize={40}
             className="cursor-pointer"
-            onClick={() => setToggleSidebar(false)}
+            onClick={() => setToggleSidebar(true)}
           />
           <Link to="/">
             <img src={logo} alt="logo" className="w-28" />
@@ -66,6 +66,7 @@ const Home = () => {
           <Route path="/*" element={<Pins user={user && user} />} />
         </Routes>
       </div>
+     
     </div>
   );
 };
