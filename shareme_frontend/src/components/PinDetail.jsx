@@ -13,7 +13,7 @@ const PinDetail = ({ user }) => {
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const { pinId } = useParams();
-
+  console.log(user);
   const fetchPinDetails = () => {
     let query = pinDetailQuery(pinId);
     if (query) {
@@ -53,7 +53,12 @@ const PinDetail = ({ user }) => {
   };
   useEffect(() => {
     fetchPinDetails();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // for smoothly scrolling
+    });
   }, [pinId]);
+
   if (!pinDetail) return <Spinner message="Loading pin..." />;
 
   return (
@@ -62,10 +67,18 @@ const PinDetail = ({ user }) => {
         className="flex xl-flex-row flex-col m-auto bg-white xl:flex-row mt-5"
         style={{ maxWidth: "1500px", borderRadius: "16px" }}
       >
-        <div className="flex justify-center items-center md:items-start flex-initial xl:w-3/5 xl:max-h-[calc(100vh-120px)]">
+        <div
+          className="flex justify-center items-center md:items-start flex-initial xl:w-3/5 xl:max-h-[calc(100vh-120px)] rounded-lg  xl:rounded-l-lg"
+          style={{
+            backgroundImage:
+              "url(" +
+              "https://www.teahub.io/photos/full/34-342401_pink-love-background-pictures-background-image-for-love.jpg" +
+              ")",
+          }}
+        >
           <img
             src={pinDetail?.image && urlFor(pinDetail.image).url()}
-            className="rounded-t-3xl rounded-b-lg xl:w-full xl:h-full xl:object-contain xl:rounded-b-lg "
+            className="rounded-lg rounded-b-lg xl:w-full xl:h-full xl:object-contain xl:rounded-l-lg"
             alt="user-post"
           />
         </div>
@@ -104,7 +117,7 @@ const PinDetail = ({ user }) => {
               {pinDetail?.postedBy?.userName}
             </p>
           </Link>
-          <h2 className="mt-5 text-2xl">Comments</h2>
+          <h2 className="mt-5 text-2xl">Bình luận</h2>
           <div className="max-h-370 overflow-y-auto">
             {pinDetail?.comments?.map((comment, index) => (
               <div
@@ -124,17 +137,16 @@ const PinDetail = ({ user }) => {
             ))}
           </div>
           <div className="flex flex-wrap mt-6 gap-3">
-            <Link to={`user-profile/${pinDetail?.postedBy?._id}`}>
+            <Link to={`/user-profile/${user?._id}`}>
               <img
                 className="w-10 h-10 rounded-full cursor-pointer"
-                src={pinDetail?.postedBy?.image}
+                src={user?.image}
                 alt="user-profile"
               />
             </Link>
             <input
               className="flex-1 border-gray-100 outline-none border-2 p-2 rounded-2xl focus:border-gray-300"
               type="text"
-              placeholder="comment"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
@@ -143,7 +155,7 @@ const PinDetail = ({ user }) => {
               className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
               onClick={addComment}
             >
-              {addingComment ? "Posting the comment ...." : "Post"}
+              {addingComment ? "Đang gửi ...." : "Gửi"}
             </button>
           </div>
         </div>
@@ -151,11 +163,11 @@ const PinDetail = ({ user }) => {
       {pins?.length > 0 && (
         <>
           <h2 className="text-center font-bold text-2x mt-8 mb-4">
-            More like this
+            Có thể bạn sẽ thích
           </h2>
           <MasonryLayout pins={pins} />
         </>
-      ) }
+      )}
     </>
   );
 };

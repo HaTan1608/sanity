@@ -10,11 +10,9 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
   const [postHovered, setPostHovered] = useState(false);
   const navigate = useNavigate();
   const user = fetchUser();
-  console.log(postedBy);
   const alreadySaved = !!save?.filter(
     (item) => item.postedBy._id === user?.googleId
   ).length;
-  console.log(destination);
   const savePin = (id) => {
     if (!alreadySaved) {
       client
@@ -50,9 +48,9 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
         className="relative cursor-zoom-in w-auto hover:shadow-lg rounded-lg overflow-hidden transition-all duration-500 ease-in-out"
       >
         <img
-          className="rounded-lg w-full h-full object-cover"
+          className="w-full h-full object-cover"
           alt="user-post"
-          src={urlFor(image).width(250).url()}
+          src={image?.asset?.url}
         />
         {postHovered && (
           <div

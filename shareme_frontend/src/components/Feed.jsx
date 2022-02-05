@@ -26,7 +26,11 @@ const Feed = () => {
     }
   }, [categoryId]);
   if (loading)
-    return <Spinner message="We are adding new ideas to your feed!!" />;
+    return (
+      <div style={{ marginTop: "100px" }}>
+        <Spinner message="Đợi xí ^^" />
+      </div>
+    );
   return <div>{pins && <MasonryLayout pins={pins} />}</div>;
 };
 
