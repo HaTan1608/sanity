@@ -7,59 +7,30 @@ import { client, urlFor } from "../client";
 import MasonryLayout from "./Masonry";
 import { pinDetailMorePinQuery, pinDetailQuery } from "../utils/data";
 import Spinner from "./Spinner";
-const PinDetail = ({ user }) => {
-  const [pins, setPins] = useState(null);
-  const [pinDetail, setPinDetail] = useState(null);
+import { getPostById } from "../store/actions/postActions";
+import { connect, useDispatch } from "react-redux";
+import { postSearchSelectors } from "../store/selectors/postSelector";
+const PinDetail = ({ user, postSearchSelectors }) => {
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const { pinId } = useParams();
   console.log(user);
-  const fetchPinDetails = () => {
-    let query = pinDetailQuery(pinId);
-    if (query) {
-      client.fetch(query).then((data) => {
-        setPinDetail(data[0]);
-        if (data[0]) {
-          query = pinDetailMorePinQuery(data[0]);
-          client.fetch(query).then((res) => setPins(res));
-        }
-      });
-    }
-  };
-
-  const addComment = () => {
-    if (comment) {
-      setAddingComment(true);
-      client
-        .patch(pinId)
-        .setIfMissing({ comments: [] })
-        .insert("after", "comments[-1]", [
-          {
-            comment,
-            _key: uuidv4(),
-            postedBy: {
-              _type: "postedBy",
-              _ref: user._id,
-            },
-          },
-        ])
-        .commit()
-        .then(() => {
-          fetchPinDetails();
-          setComment("");
-          setAddingComment(false);
-        });
-    }
-  };
+  const dispatch = useDispatch();
+  const { posts: pins, post: pinDetail, load } = postSearchSelectors;
   useEffect(() => {
-    fetchPinDetails();
+    dispatch(getPostById(pinId));
     window.scrollTo({
       top: 0,
       behavior: "smooth", // for smoothly scrolling
     });
   }, [pinId]);
-
-  if (!pinDetail) return <Spinner message="Loading pin..." />;
+  console.log(pinDetail);
+  if (!pinDetail)
+    return (
+      <div style={{ marginTop: "100px" }}>
+        <Spinner message="Loading pin..." />
+      </div>
+    );
 
   return (
     <>
@@ -77,7 +48,7 @@ const PinDetail = ({ user }) => {
           }}
         >
           <img
-            src={pinDetail?.image && urlFor(pinDetail.image).url()}
+            src={pinDetail?.selectedFile}
             className="rounded-lg rounded-b-lg xl:w-full xl:h-full xl:object-contain xl:rounded-l-lg"
             alt="user-post"
           />
@@ -86,7 +57,7 @@ const PinDetail = ({ user }) => {
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center">
               <a
-                href={`${pinDetail.image?.asset?.url}?dl=`}
+                href={`${pinDetail.selectedFile}?dl=`}
                 download
                 onClick={(e) => e.stopPropagation()}
                 className="bg-white w-9 h-9 rounded-full flex items-center  justify-center text-dark  text-xl opacity-75  hover:opacity-100 hover:shadow-md  outline-none"
@@ -102,36 +73,41 @@ const PinDetail = ({ user }) => {
             <h1 className="text-4xl font-bold break-words mt-3">
               {pinDetail.title}
             </h1>
-            <p className="mt-3">{pinDetail.about}</p>
+            <p className="mt-3">{pinDetail.message}</p>
           </div>
           <Link
-            to={`user-profile/${pinDetail?.postedBy?._id}`}
+            to={`user-profile/${pinDetail?.creator}`}
             className="flex gap-2 mt-5 items-center bg-white rounded-lg"
           >
             <img
               className="w-8 h-8 rounded-full object-cover"
-              src={pinDetail?.postedBy?.image}
+              src={
+                pinDetail?.avatar ||
+                "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+              }
               alt="user-profile"
             />
-            <p className="font-semibold capitalize">
-              {pinDetail?.postedBy?.userName}
-            </p>
+            <p className="font-semibold capitalize">{pinDetail?.name}</p>
           </Link>
           <h2 className="mt-5 text-2xl">Bình luận</h2>
-          <div className="max-h-370 overflow-y-auto">
+          <div className="max-h-370 overflow-y-auto mt-1">
             {pinDetail?.comments?.map((comment, index) => (
               <div
-                className="flex gap-2 mt-5 items-center bg-white rounded-lg"
+                className="flex gap-2 mt-1 items-center bg-white rounded-lg"
                 key={index}
               >
                 <img
-                  src={comment.postedBy.image}
+                  src={
+                    comment?.avatar ||
+                    "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+                  }
                   alt="user-profile"
-                  className="w-10 h-10 rounded-full cursor-pointer"
+                  className="w-8 h-8 rounded-full cursor-pointer object-cover"
+                  
                 />
-                <div className="felx flex-col">
-                  <p className="font-bold">{comment.postedBy.userName}</p>
-                  <p>{comment.comment}</p>
+                <div className="flex flex-row w-full">
+                  <p className="font-bold">{comment?.name}</p>
+                  <p className="ml-4">{comment?.comment}</p>
                 </div>
               </div>
             ))}
@@ -153,7 +129,6 @@ const PinDetail = ({ user }) => {
             <button
               type="button"
               className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
-              onClick={addComment}
             >
               {addingComment ? "Đang gửi ...." : "Gửi"}
             </button>
@@ -172,4 +147,9 @@ const PinDetail = ({ user }) => {
   );
 };
 
-export default PinDetail;
+function mapStateToProps(state) {
+  return {
+    postSearchSelectors: postSearchSelectors(state),
+  };
+}
+export default connect(mapStateToProps)(PinDetail);

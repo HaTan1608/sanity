@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { connect, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { client } from "../client";
+import { getListPost } from "../store/actions/postActions";
+import { postSearchSelectors } from "../store/selectors/postSelector";
 import { feedQuery, searchQuery } from "../utils/data";
 import MasonryLayout from "./Masonry";
 import Spinner from "./Spinner";
-const Feed = () => {
-  const [loading, setLoading] = useState(false);
-  const [pins, setPins] = useState(null);
-  const { categoryId } = useParams();
+const Feed = ({ postSearchSelectors }) => {
+  const dispatch = useDispatch();
   useEffect(() => {
-    setLoading(true);
-
-    if (categoryId) {
-      const query = searchQuery(categoryId);
-      client.fetch(query).then((data) => {
-        setPins(data);
-        setLoading(false);
-      });
-    } else {
-      client.fetch(feedQuery).then((data) => {
-        setPins(data);
-        setLoading(false);
-      });
-    }
-  }, [categoryId]);
+    dispatch(getListPost());
+  }, []);
+  console.log(postSearchSelectors)
+  const { load: loading, posts: pins } = postSearchSelectors;
   if (loading)
     return (
       <div style={{ marginTop: "100px" }}>
@@ -34,4 +24,9 @@ const Feed = () => {
   return <div>{pins && <MasonryLayout pins={pins} />}</div>;
 };
 
-export default Feed;
+function mapStateToProps(state) {
+  return {
+    postSearchSelectors: postSearchSelectors(state),
+  };
+}
+export default connect(mapStateToProps)(Feed);

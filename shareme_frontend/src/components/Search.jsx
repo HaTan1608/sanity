@@ -5,46 +5,31 @@ import { client } from "../client";
 import { feedQuery, searchQuery } from "../utils/data";
 import Spinner from "./Spinner";
 import { debounce } from "lodash";
-import { getListPost, getSearchListPost } from "../store/action";
-const Search = ({ searchTerm }) => {
-  const [pins, setPins] = useState();
-  const [loading, setLoading] = useState(false);
+import { getListPost, getSearchListPost } from "../store/actions/postActions";
+import { postSearchSelectors } from "../store/selectors/postSelector";
+const Search = ({ searchTerm, postSearchSelectors }) => {
   const debounceDropDown = useCallback(
-    debounce((searchTerm) => fetchData(...searchTerm), 300),
+    debounce((searchTerm) => fetchData(searchTerm), 300),
     []
   );
+  const { load, posts:pins} = postSearchSelectors;
   const fetchData = (searchTerm) => {
-    setLoading(true);
-    setPins([]);
-    const query = searchQuery(...searchTerm.toLowerCase());
-    client.fetch(query).then((data) => {
-      setPins(data);
-      setLoading(false);
-    });
+    dispatch(getSearchListPost(searchTerm));
   };
-  useEffect(() => {
-    if (searchTerm !== "") {
-      debounceDropDown(...searchTerm);
-    } else {
-      client.fetch(feedQuery).then((data) => {
-        setPins(data);
-        setLoading(false);
-      });
-    }
-  }, [searchTerm]);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getSearchListPost(searchTerm));
+    debounceDropDown(searchTerm);
   }, [searchTerm]);
+  console.log(postSearchSelectors);
   return (
     <div>
-      {loading && (
+      {load && (
         <div style={{ marginTop: "100px" }}>
           <Spinner message="Đợi xí" />
         </div>
       )}
       {pins?.length !== 0 && <MasonryLayout pins={pins} />}
-      {pins?.length === 0 && searchTerm !== "" && !loading && (
+      {pins?.length === 0 && searchTerm !== "" && !load && (
         <div className="mt-10 text-center text-xl ">
           Không có bài viết phù hợp
         </div>
@@ -53,4 +38,9 @@ const Search = ({ searchTerm }) => {
   );
 };
 
-export default Search;
+function mapStateToProps(state) {
+  return {
+    postSearchSelectors: postSearchSelectors(state),
+  };
+}
+export default connect(mapStateToProps)(Search);

@@ -6,7 +6,9 @@ import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 import { fetchUser } from "../utils/fetchUser";
-const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
+const Pin = ({
+  pin: { avatar, postedBy, selectedFile: image, _id, destination, save, name },
+}) => {
   const [postHovered, setPostHovered] = useState(false);
   const navigate = useNavigate();
   const user = fetchUser();
@@ -50,7 +52,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
         <img
           className="w-full h-full object-cover"
           alt="user-post"
-          src={image?.asset?.url}
+          src={image}
         />
         {postHovered && (
           <div
@@ -60,7 +62,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
             <div className="flex items-center justify-between">
               <div className="flex gap-2">
                 <a
-                  href={`${image?.asset?.url}?dl=`}
+                  href={`${image}?dl=`}
                   download
                   onClick={(e) => e.stopPropagation()}
                   className="bg-white w-9 h-9 rounded-full flex items-center  justify-center text-dark  text-xl opacity-75  hover:opacity-100 hover:shadow-md  outline-none"
@@ -89,7 +91,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
               )}
             </div>
             <div className="flex justify-between items-center gap-2 w-full">
-              {destination && (
+              {/*{destination && (
                 <a
                   href={destination}
                   target="_blank"
@@ -101,7 +103,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
                     ? `${destination.slice(0, 15)}...`
                     : destination}
                 </a>
-              )}
+                  )}
               {postedBy?._id === user?.googleId && (
                 <button
                   type="button"
@@ -113,7 +115,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
                 >
                   <AiTwotoneDelete />
                 </button>
-              )}
+              )}*/}
             </div>
           </div>
         )}
@@ -124,10 +126,13 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
       >
         <img
           className="w-8 h-8 rounded-full object-cover"
-          src={postedBy?.image}
+          src={
+            avatar ||
+            "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+          }
           alt="user-profile"
         />
-        <p className="font-semibold capitalize">{postedBy?.userName}</p>
+        <p className="font-semibold capitalize">{name}</p>
       </Link>
     </div>
   );

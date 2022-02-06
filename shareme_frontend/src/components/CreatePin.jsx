@@ -9,7 +9,6 @@ import { categories } from "../utils/data";
 const CreatePin = ({ user }) => {
   const [title, setTitle] = useState("");
   const [about, setAbout] = useState("");
-  const [destination, setDestination] = useState("");
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState(false);
   const [category, setCategory] = useState(null);
@@ -46,12 +45,11 @@ const CreatePin = ({ user }) => {
   };
 
   const savePin = () => {
-    if (title && about && destination && imageAsset?._id && category) {
+    if (title && about && imageAsset?._id && category) {
       const doc = {
         _type: "pin",
         title,
         about,
-        destination,
         image: {
           type: "image",
           asset: {
@@ -78,14 +76,14 @@ const CreatePin = ({ user }) => {
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
       {fields && (
         <p className="text-red-500 mb-5 text-xl transition-all duration-150 ease-in">
-          Please fill in all the fields.
+          Vui lòng điền đủ thông tin.
         </p>
       )}
       <div className="flex lg:flex-row flex-col justify-center items-center bg-white lg:p-5 p-3 lg:w-4/5 w-full">
         <div className="bg-secondaryColor p-3 flex flex-0.7 w-full">
           <div className="flex justify-center items-center flex-col border-2 border-dotted border-gray-300 p-3 w-full h-420">
             {loading && <Spinner />}
-            {wrongImageType && <p>Wrong image type</p>}
+            {wrongImageType && <p>Sai định dạng ảnh</p>}
             {!imageAsset ? (
               <label>
                 <div className="flex flex-col items-center justify-center h-full">
@@ -93,11 +91,10 @@ const CreatePin = ({ user }) => {
                     <p className="font-bold text-2xl">
                       <AiOutlineCloudUpload />
                     </p>
-                    <p className="text-lg">Click to upload</p>
+                    <p className="text-lg">Up ảnh</p>
                   </div>
                   <p className="mt-32 text-gray-400">
-                    Recommendation: use high-quality JPG, SVG, PNG, GIF less
-                    than 20MB
+                    Vui lòng sử dụng ảnh dưới 20MB
                   </p>
                 </div>
                 <input
@@ -130,7 +127,7 @@ const CreatePin = ({ user }) => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title"
+            placeholder="Tiêu đề"
             className="outline-none text-2xl sm:text-3xl font-bold border-b-2 border-gray-200 p-2"
           />
           {user && (
@@ -147,32 +144,24 @@ const CreatePin = ({ user }) => {
             type="text"
             value={about}
             onChange={(e) => setAbout(e.target.value)}
-            placeholder="About"
-            className="outline-none text-base sm:text-lg  border-b-2 border-gray-200 p-2"
-          />
-          <input
-            type="text"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            placeholder="Destination link"
+            placeholder="Nội dung"
             className="outline-none text-base sm:text-lg  border-b-2 border-gray-200 p-2"
           />
           <div className="flex flex-col">
             <div>
-              <p className="mb-2 font-semibold text-lg sm:text-xl">category</p>
               <select
                 onChange={(e) => setCategory(e.target.value)}
                 className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
               >
                 <option value="other" className="bg-white">
-                  Select category
+                  Thể loại
                 </option>
                 {categories.map((category) => (
                   <option
                     className="text-base border-0 outline-none capitalize bg-white text-black"
                     value={category.name}
                   >
-                    {category.name}
+                    {category.label}
                   </option>
                 ))}
               </select>
@@ -183,7 +172,7 @@ const CreatePin = ({ user }) => {
                 onClick={savePin}
                 className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
               >
-                Save pin
+                Đăng
               </button>
             </div>
           </div>
