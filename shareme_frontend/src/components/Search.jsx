@@ -12,9 +12,13 @@ const Search = ({ searchTerm, postSearchSelectors }) => {
     debounce((searchTerm) => fetchData(searchTerm), 300),
     []
   );
-  const { load, posts:pins} = postSearchSelectors;
+  const { load, posts: pins } = postSearchSelectors;
   const fetchData = (searchTerm) => {
-    dispatch(getSearchListPost(searchTerm));
+    if (searchTerm !== "") {
+      dispatch(getSearchListPost(searchTerm));
+    } else {
+      dispatch(getListPost());
+    }
   };
   const dispatch = useDispatch();
   useEffect(() => {

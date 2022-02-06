@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoMdAdd, IoMdSearch } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { userLogout } from "../store/actions/userActions";
 const Navbar = ({ searchTerm, setSearchTerm, user }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   //if (!user) return null;
+  const [openUser, setOpenUser] = useState(false);
+  const handleLogout = () => {
+    dispatch(userLogout());
+  };
+  console.log(user);
   return (
     <div className="flex gap-2 md:gap-5 w-full mt-5">
       <div className="flex justify-start items-center w-full px-2 rounded-md bg-white border-none outline-none focus-within:shadow-sm">
@@ -18,9 +26,62 @@ const Navbar = ({ searchTerm, setSearchTerm, user }) => {
         />
       </div>
       <div className="flex gap-3">
-        <Link to={`user-profile/${user?._id}`} className="hidden md:block">
-          <img src={user?.image} alt="user" className="w-14 h-12 rounded-lg " />
-        </Link>
+        <div
+          className="hidden md:block relative"
+          onMouseOver={() => setOpenUser(true)}
+          onMouseLeave={() => setOpenUser(false)}
+        >
+          {user?._id ? (
+            <>
+              {" "}
+              <img
+                src={user?.image}
+                alt="user"
+                className="w-14 h-12 rounded-lg "
+              />
+              <div className="h-2"></div>
+              <ul
+                className="absolute z-10 bg-white right-0 top-15  w-190 p-4 rounded-lg"
+                style={openUser ? { display: "block" } : { display: "none" }}
+              >
+                <li className="font-semibold text-base cursor-pointer">
+                  <Link to={`user-profile/${user?._id}`}>Trang cá nhân</Link>
+                </li>
+                <li
+                  className="font-semibold text-base cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  Đăng xuất
+                </li>
+              </ul>
+            </>
+          ) : (
+            <>
+              <img
+                src={
+                  "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+                }
+                alt="user"
+                className="w-14 h-12 rounded-lg object-cover"
+              />
+              <div className="h-2"></div>
+              <ul
+                className="absolute z-10 bg-white right-0 top-15  w-190 p-4 rounded-lg"
+                style={openUser ? { display: "block" } : { display: "none" }}
+              >
+                <li className="font-semibold text-base cursor-pointer ">
+                  <Link to={`user-profile/${user?._id}`}>Đăng ký</Link>
+                </li>
+                <li
+                  className="font-semibold text-base cursor-pointer mt-2"
+                  onClick={handleLogout}
+                >
+                  Đăng nhập
+                </li>
+              </ul>
+            </>
+          )}
+        </div>
         <Link
           to="create-pin"
           className="bg-black text-white rounded-lg w-12 h-12 md:w-14  md:h-12 flex justify-center items-center"

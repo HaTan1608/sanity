@@ -5,11 +5,13 @@ import Home from "./container/Home";
 import { fetchUser } from "./utils/fetchUser";
 
 const App = () => {
-  const navigate = useNavigate();
+  {
+    /*} const navigate = useNavigate();
   useEffect(() => {
     const user = fetchUser();
     if (!user) navigate("/login");
-  });
+  }, [user]);*/
+  }
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

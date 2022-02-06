@@ -1,0 +1,5 @@
+export const USER_LOG_IN = "USER_LOG_IN";
+export const USER_LOG_IN_SUCCESS = "USER_LOG_IN_SUCCESS";
+
+export const USER_LOG_OUT = "USER_LOG_OUT";
+export const USER_LOG_OUT_SUCCESS = "USER_LOG_OUT_SUCCESS";

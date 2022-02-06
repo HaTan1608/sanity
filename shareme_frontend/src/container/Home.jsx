@@ -9,18 +9,12 @@ import { userQuery } from "../utils/data";
 import { client } from "../client";
 import logo from "../assets/logo.png";
 import { fetchUser } from "../utils/fetchUser";
-const Home = () => {
+import { userSelectors } from "../store/selectors/userSelector";
+import { connect } from "react-redux";
+const Home = ({ userSelectors }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [user, setUser] = useState(null);
-  const userInfo = fetchUser();
   const scrollRef = useRef(null);
-  useEffect(() => {
-    const query = userQuery(userInfo?.googleId);
-    client.fetch(query).then((data) => {
-      setUser(data[0]);
-    });
-  }, []);
-
+  const { user } = userSelectors;
   useEffect(() => {
     scrollRef.current.scrollTo(0, 0);
   }, []);
@@ -72,4 +66,9 @@ const Home = () => {
     </div>
   );
 };
-export default Home;
+function mapStateToProps(state) {
+  return {
+    userSelectors: userSelectors(state),
+  };
+}
+export default connect(mapStateToProps)(Home);
