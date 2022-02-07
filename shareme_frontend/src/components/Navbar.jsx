@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoMdAdd, IoMdSearch } from "react-icons/io";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { userLogout } from "../store/actions/userActions";
-const Navbar = ({ searchTerm, setSearchTerm, user }) => {
+import { userSelectors } from "../store/selectors/userSelector";
+const Navbar = ({ searchTerm, setSearchTerm }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //if (!user) return null;
   const [openUser, setOpenUser] = useState(false);
   const handleLogout = () => {
+    setUserData(null);
     dispatch(userLogout());
   };
-  console.log(user);
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("profile"))
+  );
+  const user = userData?.result;
   return (
     <div className="flex gap-2 md:gap-5 w-full mt-5">
       <div className="flex justify-start items-center w-full px-2 rounded-md bg-white border-none outline-none focus-within:shadow-sm">
@@ -35,7 +40,10 @@ const Navbar = ({ searchTerm, setSearchTerm, user }) => {
             <>
               {" "}
               <img
-                src={user?.image}
+                src={
+                  user?.avatar ||
+                  "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+                }
                 alt="user"
                 className="w-14 h-12 rounded-lg "
               />
@@ -48,7 +56,7 @@ const Navbar = ({ searchTerm, setSearchTerm, user }) => {
                   <Link to={`user-profile/${user?._id}`}>Trang cá nhân</Link>
                 </li>
                 <li
-                  className="font-semibold text-base cursor-pointer"
+                  className="font-semibold text-base cursor-pointer mt-2"
                   onClick={handleLogout}
                 >
                   Đăng xuất
@@ -70,13 +78,13 @@ const Navbar = ({ searchTerm, setSearchTerm, user }) => {
                 style={openUser ? { display: "block" } : { display: "none" }}
               >
                 <li className="font-semibold text-base cursor-pointer ">
-                  <Link to={`user-profile/${user?._id}`}>Đăng ký</Link>
+                  <Link to={`account/register`}>Tạo tài khoản</Link>
                 </li>
                 <li
                   className="font-semibold text-base cursor-pointer mt-2"
                   onClick={handleLogout}
                 >
-                  Đăng nhập
+                  <Link to={`account/login`}>Đăng nhập</Link>
                 </li>
               </ul>
             </>

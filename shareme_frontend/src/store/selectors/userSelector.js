@@ -6,6 +6,7 @@ export const userSelectors = createSelector(
   (state) => state.user,
   (data) => {
     if (data) {
+      console.log(data)
       return data;
     }
     return null;

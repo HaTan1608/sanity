@@ -10,13 +10,14 @@ import Spinner from "./Spinner";
 import { getPostById } from "../store/actions/postActions";
 import { connect, useDispatch } from "react-redux";
 import { postSearchSelectors } from "../store/selectors/postSelector";
-const PinDetail = ({ user, postSearchSelectors }) => {
+const PinDetail = ({ postSearchSelectors }) => {
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const { pinId } = useParams();
-  console.log(user);
   const dispatch = useDispatch();
   const { posts: pins, post: pinDetail, load } = postSearchSelectors;
+
+  const user = JSON.parse(localStorage.getItem("profile"))?.result;
   useEffect(() => {
     dispatch(getPostById(pinId));
     window.scrollTo({
@@ -24,7 +25,6 @@ const PinDetail = ({ user, postSearchSelectors }) => {
       behavior: "smooth", // for smoothly scrolling
     });
   }, [pinId]);
-  console.log(pinDetail);
   if (!pinDetail)
     return (
       <div style={{ marginTop: "100px" }}>
@@ -103,7 +103,6 @@ const PinDetail = ({ user, postSearchSelectors }) => {
                   }
                   alt="user-profile"
                   className="w-8 h-8 rounded-full cursor-pointer object-cover"
-                  
                 />
                 <div className="flex flex-row w-full">
                   <p className="font-bold">{comment?.name}</p>
@@ -116,7 +115,10 @@ const PinDetail = ({ user, postSearchSelectors }) => {
             <Link to={`/user-profile/${user?._id}`}>
               <img
                 className="w-10 h-10 rounded-full cursor-pointer"
-                src={user?.image}
+                src={
+                  user?.avatar ||
+                  "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+                }
                 alt="user-profile"
               />
             </Link>

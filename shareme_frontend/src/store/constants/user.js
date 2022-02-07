@@ -3,3 +3,6 @@ export const USER_LOG_IN_SUCCESS = "USER_LOG_IN_SUCCESS";
 
 export const USER_LOG_OUT = "USER_LOG_OUT";
 export const USER_LOG_OUT_SUCCESS = "USER_LOG_OUT_SUCCESS";
+
+export const USER_SIGN_UP = "USER_SIGN_UP";
+export const USER_SIGN_UP_SUCCESS = "USER_SIGN_UP_SUCCESS";

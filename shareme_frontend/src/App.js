@@ -1,20 +1,33 @@
-import React, { useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 import Login from "./components/Login";
 import Home from "./container/Home";
 import { fetchUser } from "./utils/fetchUser";
 
 const App = () => {
-  {
-    /*} const navigate = useNavigate();
+  const location = useLocation();
+  const [mainLocation, setMainLocation] = useState("");
   useEffect(() => {
-    const user = fetchUser();
-    if (!user) navigate("/login");
-  }, [user]);*/
-  }
+    if (
+      location.pathname.toString() !== "/account/login" &&
+      location.pathname.toString() !== "/account/register"
+    ) {
+      setMainLocation(location);
+    }
+  }, [location]);
+
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/account/:type"
+        element={<Login location={mainLocation} />}
+      />
       <Route path="/*" element={<Home />} />
     </Routes>
   );
