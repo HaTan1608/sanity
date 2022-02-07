@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router";
-
+import axios from "axios";
 import { client } from "../client";
 import Spinner from "./Spinner";
 import { categories } from "../utils/data";
@@ -15,37 +15,39 @@ const CreatePin = ({ user }) => {
   const [imageAsset, setImageAsset] = useState(null);
   const [wrongImageType, setWrongImageType] = useState(null);
   const navigate = useNavigate();
-
-  const uploadImage = (e) => {
-    const { type, name } = e.target.files[0];
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
     if (
-      type === "image/png" ||
-      type === "image/svg" ||
-      type === "image/jpeg" ||
-      type === "image/gif" ||
-      type === "image/tiff"
+      file.type === "image/png" ||
+      file.type === "image/svg" ||
+      file.type === "image/jpeg" ||
+      file.type === "image/gif" ||
+      file.type === "image/tiff"
     ) {
       setWrongImageType(false);
+      const bodyFormData = new FormData();
+      bodyFormData.append("image", file);
       setLoading(true);
-      client.assets
-        .upload("image", e.target.files[0], {
-          contentType: type,
-          filename: name,
-        })
-        .then((document) => {
-          setImageAsset(document);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("Image upload error", error);
+      try {
+        const { data } = await axios.post("/api/uploads", bodyFormData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${user?.token}`,
+          },
         });
+        setImageAsset(data);
+        console.log(data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
     } else {
       setWrongImageType(true);
     }
   };
 
   const savePin = () => {
-    if (title && about && imageAsset?._id && category) {
+    if (title && about && imageAsset && category) {
       const doc = {
         _type: "pin",
         title,
@@ -54,7 +56,7 @@ const CreatePin = ({ user }) => {
           type: "image",
           asset: {
             _type: "reference",
-            _ref: imageAsset?._id,
+            _ref: imageAsset,
           },
         },
         userId: user._id,
@@ -107,7 +109,7 @@ const CreatePin = ({ user }) => {
             ) : (
               <div className="relative h-full">
                 <img
-                  src={imageAsset?.url}
+                  src={imageAsset}
                   alt="uploaded-pic"
                   className="h-full w-full"
                 />
