@@ -18,24 +18,14 @@ const notActiveBtnStyles =
   "bg-primary mr-4 text-black font-bold p-2 rounded-full w-20 outline-none";
 
 const UserProfile = () => {
-  const [user, setUser] = useState();
   const [pins, setPins] = useState();
   const [text, setText] = useState("Created");
   const [activeBtn, setActiveBtn] = useState("created");
   const navigate = useNavigate();
   const { userId } = useParams();
 
-  const User =
-    localStorage.getItem("user") !== "undefined"
-      ? JSON.parse(localStorage.getItem("user"))
-      : localStorage.clear();
-
-  useEffect(() => {
-    const query = userQuery(userId);
-    client.fetch(query).then((data) => {
-      setUser(data[0]);
-    });
-  }, [userId]);
+  const userData = JSON.parse(localStorage.getItem("profile"));
+  const user = userData?.result;
 
   useEffect(() => {
     if (text === "Created") {
@@ -83,32 +73,11 @@ const UserProfile = () => {
             />
             <img
               className="rounded-full w-20 h-20 -mt-10 shadow-xl object-cover"
-              src={user.image}
+              src={user.avatar}
               alt="user-pic"
             />
           </div>
-          <h1 className="font-bold text-3xl text-center mt-3">
-            {user.userName}
-          </h1>
-          <div className="absolute top-0 z-1 right-0 p-2">
-            {userId === User.googleId && (
-              <GoogleLogout
-                clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
-                render={(renderProps) => (
-                  <button
-                    type="button"
-                    className=" bg-white p-2 rounded-full cursor-pointer outline-none shadow-md"
-                    onClick={renderProps.onClick}
-                    disabled={renderProps.disabled}
-                  >
-                    <AiOutlineLogout color="red" fontSize={21} />
-                  </button>
-                )}
-                onLogoutSuccess={logout}
-                cookiePolicy="single_host_origin"
-              />
-            )}
-          </div>
+          <h1 className="font-bold text-3xl text-center mt-3">{user.name}</h1>
         </div>
         <div className="text-center mb-7">
           <button

@@ -18,7 +18,7 @@ const CreatePin = () => {
   const [category, setCategory] = useState(null);
   const dispatch = useDispatch();
   const userData = JSON.parse(localStorage.getItem("profile"));
-  const user = userData.result;
+  const user = userData?.result;
   const navigate = useNavigate();
   const uploadImage = async (e) => {
     const file = e.target.files[0];
