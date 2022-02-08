@@ -26,6 +26,10 @@ const PORT = process.env.PORT || 5000;
 //const __dirname = pa
 
 const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "/shareme_frontend/build")));
+app.get("*", (req, res) =>
+  res.sendFile(path.join(__dirname, "/shareme_frontend/build/index.html"))
+);
 mongoose.connect(CONNECTION_URL, {});
 
 const httpServer = http.Server(app);

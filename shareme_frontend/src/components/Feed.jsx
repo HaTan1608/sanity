@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
 
-import { client } from "../client";
 import { getListPost } from "../store/actions/postActions";
 import { postSearchSelectors } from "../store/selectors/postSelector";
-import { feedQuery, searchQuery } from "../utils/data";
 import MasonryLayout from "./Masonry";
 import Spinner from "./Spinner";
 const Feed = ({ postSearchSelectors }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getListPost());
-  }, []);
-  console.log(postSearchSelectors)
+  }, [dispatch]);
   const { load: loading, posts: pins } = postSearchSelectors;
   if (loading)
     return (

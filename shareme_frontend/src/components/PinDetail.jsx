@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { MdDownloadForOffline } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
 
-import { client, urlFor } from "../client";
 import MasonryLayout from "./Masonry";
-import { pinDetailMorePinQuery, pinDetailQuery } from "../utils/data";
 import Spinner from "./Spinner";
-import { getPostById } from "../store/actions/postActions";
+import { addComment, getPostById } from "../store/actions/postActions";
 import { connect, useDispatch } from "react-redux";
 import { postSearchSelectors } from "../store/selectors/postSelector";
 const PinDetail = ({ postSearchSelectors }) => {
   const [comment, setComment] = useState("");
-  const [addingComment, setAddingComment] = useState(false);
   const { pinId } = useParams();
   const dispatch = useDispatch();
-  const { posts: pins, post: pinDetail, load } = postSearchSelectors;
-
+  const { posts: pins, post: pinDetail } = postSearchSelectors;
   const user = JSON.parse(localStorage.getItem("profile"))?.result;
+  console.log(user?._id, pinDetail.creator);
+  const comments = pinDetail?.comments || [];
+  const handleAddComment = () => {
+    comments.push({ comment: comment, name: user?.name, avatar: user?.avatar });
+    dispatch(
+      addComment(pinId, { comment, name: user?.name, avatar: user?.avatar })
+    );
+    setComment("");
+  };
   useEffect(() => {
     dispatch(getPostById(pinId));
     window.scrollTo({
       top: 0,
       behavior: "smooth", // for smoothly scrolling
     });
-  }, [pinId]);
+  }, [dispatch, pinId]);
   if (!pinDetail)
     return (
       <div style={{ marginTop: "100px" }}>
@@ -65,9 +69,11 @@ const PinDetail = ({ postSearchSelectors }) => {
                 <MdDownloadForOffline />
               </a>
             </div>
-            <a href={pinDetail.destination} target="_blank" rel="noneferrer">
-              {pinDetail.destination}
-            </a>
+            {user && user?._id === pinDetail.creator && (
+              <Link to={`/edit-pin/${pinId}`} className="text-right w-full">
+                Chỉnh sửa
+              </Link>
+            )}
           </div>
           <div>
             <h1 className="text-4xl font-bold break-words mt-3">
@@ -91,7 +97,7 @@ const PinDetail = ({ postSearchSelectors }) => {
           </Link>
           <h2 className="mt-5 text-2xl">Bình luận</h2>
           <div className="max-h-370 overflow-y-auto mt-1">
-            {pinDetail?.comments?.map((comment, index) => (
+            {comments?.map((comment, index) => (
               <div
                 className="flex gap-2 mt-1 items-center bg-white rounded-lg"
                 key={index}
@@ -131,8 +137,9 @@ const PinDetail = ({ postSearchSelectors }) => {
             <button
               type="button"
               className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
+              onClick={() => handleAddComment()}
             >
-              {addingComment ? "Đang gửi ...." : "Gửi"}
+              Gửi
             </button>
           </div>
         </div>

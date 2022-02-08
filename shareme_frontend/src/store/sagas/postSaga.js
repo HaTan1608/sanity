@@ -1,9 +1,19 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import { fetchPost, fetchPosts, fetchPostsBySearch } from "../api/postsAPI";
 import {
+  comment,
+  createPost,
+  fetchPost,
+  fetchPosts,
+  fetchPostsBySearch,
+  updatePost,
+} from "../api/postsAPI";
+import {
+  addCommentSuccess,
+  createPostSuccess,
   getListPostSuccess,
   getPostByIdSuccess,
   getSearchListPostSuccess,
+  updatePostSuccess,
 } from "../actions/postActions";
 
 function* getListPostSaga(action) {
@@ -30,8 +40,37 @@ function* getPostByIdSaga({ payload }) {
     console.log(error);
   }
 }
+function* createPostSaga({ payload }) {
+  try {
+    const data = yield call(createPost, payload);
+    yield put(createPostSuccess(data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function* updatePostSaga({ navigate, pinId, payload }) {
+  try {
+    const data = yield call(updatePost, pinId, payload);
+    yield put(updatePostSuccess(data));
+    navigate(`/pin-detail/${pinId}`);
+  } catch (error) {
+    console.log(error);
+  }
+}
+function* addCommentSaga({ pinId, payload }) {
+  try {
+    const data = yield call(comment, pinId, payload);
+    yield put(addCommentSuccess(data));
+  } catch (error) {
+    console.log(error);
+  }
+}
 export default function* postSaga() {
   yield takeLatest("GET_LIST_POST", getListPostSaga);
   yield takeLatest("GET_SEARCH_LIST_POST", getSearchListPostSaga);
   yield takeLatest("GET_POST_BY_ID", getPostByIdSaga);
+  yield takeLatest("CREATE_POST", createPostSaga);
+  yield takeLatest("UPDATE_POST", updatePostSaga);
+  yield takeLatest("ADD_COMMENT", addCommentSaga);
 }

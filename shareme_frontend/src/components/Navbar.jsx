@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoMdAdd, IoMdSearch } from "react-icons/io";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userLogout } from "../store/actions/userActions";
-import { userSelectors } from "../store/selectors/userSelector";
 const Navbar = ({ searchTerm, setSearchTerm }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,7 +18,10 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
   const user = userData?.result;
   return (
     <div className="flex gap-2 md:gap-5 w-full mt-5">
-      <div className="flex justify-start items-center w-full px-2 rounded-md bg-white border-none outline-none focus-within:shadow-sm">
+      <div
+        className="flex justify-start items-center w-full px-2 rounded-md bg-white border-none outline-none focus-within:shadow-sm"
+        style={{ height: "3rem" }}
+      >
         <IoMdSearch fontSize={21} className="ml-1" />
         <input
           type="text"
@@ -90,12 +92,14 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
             </>
           )}
         </div>
-        <Link
-          to="create-pin"
-          className="bg-black text-white rounded-lg w-12 h-12 md:w-14  md:h-12 flex justify-center items-center"
-        >
-          <IoMdAdd />
-        </Link>
+        {user?._id && (
+          <Link
+            to="create-pin"
+            className="bg-black text-white rounded-lg w-12 h-12 md:w-14  md:h-12 flex justify-center items-center"
+          >
+            <IoMdAdd />
+          </Link>
+        )}
       </div>
     </div>
   );

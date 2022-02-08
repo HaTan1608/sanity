@@ -18,12 +18,17 @@ export const fetchPostsByCreator = (name) =>
   API.get(`/api/posts/creator?name=${name}`);
 export const fetchPostsBySearch = (searchQuery) =>
   axios.get(`/api/posts/search?searchQuery=${searchQuery || "none"}`);
-export const createPost = (newPost) => API.post("/api/posts", newPost);
+export const createPost = (newPost) => {
+  API.post("/api/posts", newPost);
+};
 export const likePost = (id) => API.patch(`/api/posts/${id}/likePost`);
-export const comment = (value, id) =>
+export const comment = (id, value) => {
+  console.log(value);
   API.post(`/api/posts/${id}/commentPost`, { value });
-export const updatePost = (id, updatedPost) =>
+};
+export const updatePost = (id, updatedPost) => {
   API.patch(`/api/posts/${id}`, updatedPost);
+};
 export const deletePost = (id) => API.delete(`/api/posts/${id}`);
 
 export const signIn = (formData) => API.post("/api/user/signin", formData);

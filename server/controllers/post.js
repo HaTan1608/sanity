@@ -9,7 +9,7 @@ export const getPosts = async (req, res) => {
   const { page } = req.query;
 
   try {
-    const LIMIT = 8;
+    const LIMIT = 108;
     const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
 
     const total = await PostMessage.countDocuments({});
@@ -41,7 +41,7 @@ export const getPostsBySearch = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-
+  
 export const getPostsByCreator = async (req, res) => {
   const { name } = req.query;
 
@@ -51,7 +51,7 @@ export const getPostsByCreator = async (req, res) => {
     res.json({ data: posts });
   } catch (error) {
     res.status(404).json({ message: error.message });
-  }
+  }  
 };
 
 export const getPost = async (req, res) => {
@@ -59,7 +59,7 @@ export const getPost = async (req, res) => {
 
   try {
     const post = await PostMessage.findById(id);
-
+    console.log(post);
     res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -67,11 +67,11 @@ export const getPost = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-  const post = req.body;
-
+  const post = req.body?.postData;
   const newPostMessage = new PostMessage({
     ...post,
     creator: req.userId,
+
     createdAt: new Date().toISOString(),
   });
 
@@ -86,16 +86,26 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
   const { id } = req.params;
-  const { title, message, creator, selectedFile, tags } = req.body;
+  const { title, message, creator, avatar, name, selectedFile, category } =
+    req.body?.postData;
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+  const updatedPost = {
+    creator,
+    name,
+    avatar,
+    title,
+    message,
+    category,
+    selectedFile,
+    _id: id,
+  };
 
   await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
 
-  res.json(updatedPost);
+  res.json({ data: updatedPost });
 };
 
 export const deletePost = async (req, res) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import { RiHomeFill } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
@@ -48,6 +48,7 @@ const Sidebar = ({ closeToggle }) => {
               <img
                 src={category.image}
                 className="w-8 h-8 rounded-full shadow-sm"
+                alt="logo"
               />
               {category.label}
             </NavLink>

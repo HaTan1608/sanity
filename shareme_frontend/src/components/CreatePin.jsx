@@ -2,18 +2,23 @@ import React, { useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+
 import axios from "axios";
-import { client } from "../client";
 import Spinner from "./Spinner";
 import { categories } from "../utils/data";
-const CreatePin = ({ user }) => {
-  const [title, setTitle] = useState("");
-  const [about, setAbout] = useState("");
+import { createPost } from "../store/actions/postActions";
+const CreatePin = () => {
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState(false);
-  const [category, setCategory] = useState(null);
   const [imageAsset, setImageAsset] = useState(null);
   const [wrongImageType, setWrongImageType] = useState(null);
+  const [title, setTitle] = useState("");
+  const [about, setAbout] = useState("");
+  const [category, setCategory] = useState(null);
+  const dispatch = useDispatch();
+  const userData = JSON.parse(localStorage.getItem("profile"));
+  const user = userData.result;
   const navigate = useNavigate();
   const uploadImage = async (e) => {
     const file = e.target.files[0];
@@ -45,35 +50,33 @@ const CreatePin = ({ user }) => {
       setWrongImageType(true);
     }
   };
-
-  const savePin = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (title && about && imageAsset && category) {
-      const doc = {
-        _type: "pin",
-        title,
-        about,
-        image: {
-          type: "image",
-          asset: {
-            _type: "reference",
-            _ref: imageAsset,
+      dispatch(
+        createPost(
+          {
+            postData: {
+              title: title,
+              message: about,
+              category: category,
+              selectedFile: imageAsset,
+              creator: user?._id,
+              avatar:
+                user?.avatar ||
+                "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop",
+              name: user?.name,
+            },
           },
-        },
-        userId: user._id,
-        postedBy: {
-          _type: "postedBy",
-          _ref: user._id,
-        },
-        category,
-      };
-      client.create(doc).then(() => {
-        navigate("/");
-      });
+          navigate
+        )
+      );
     } else {
       setFields(true);
       setTimeout(() => setFields(false), 2000);
     }
   };
+
   return (
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
       {fields && (
@@ -135,11 +138,14 @@ const CreatePin = ({ user }) => {
           {user && (
             <div className="flex gap-2 my-2 items-center bg-white rounded-lg">
               <img
-                src={user.image}
+                src={
+                  user?.avatar ||
+                  "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+                }
                 className="w-10 h-10 rounded-full"
                 alt="user-profile"
               />
-              <p className="font-bold">{user.userName}</p>
+              <p className="font-bold">{user?.name}</p>
             </div>
           )}
           <input
@@ -171,7 +177,7 @@ const CreatePin = ({ user }) => {
             <div className="flex justify-end items-end mt-5">
               <button
                 type="button"
-                onClick={savePin}
+                onClick={handleSubmit}
                 className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
               >
                 Đăng

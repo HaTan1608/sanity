@@ -25,7 +25,7 @@ const postSchema = mongoose.Schema({
   name: String,
   avatar: String,
   creator: String,
-  tags: [String],
+  category: String,
   selectedFile: String,
   likes: [likeSchema],
   comments: [commentSchema],

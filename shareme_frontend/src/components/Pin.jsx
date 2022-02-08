@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { client, urlFor } from "../client";
+import { client } from "../client";
 import { MdDownloadForOffline } from "react-icons/md";
-import { AiTwotoneDelete } from "react-icons/ai";
-import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 import { fetchUser } from "../utils/fetchUser";
 const Pin = ({
-  pin: { avatar, postedBy, selectedFile: image, _id, destination, save, name },
+  pin: { avatar, postedBy, selectedFile: image, _id, save, name },
 }) => {
   const [postHovered, setPostHovered] = useState(false);
   const navigate = useNavigate();
@@ -36,11 +34,7 @@ const Pin = ({
         });
     }
   };
-  const deletePin = (id) => {
-    client.delete(id).then(() => {
-      window.location.reload();
-    });
-  };
+
   return (
     <div className="m-2">
       <div

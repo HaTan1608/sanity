@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import React, { useCallback, useEffect } from "react";
+import { connect, useDispatch } from "react-redux";
 import MasonryLayout from "./Masonry";
-import { client } from "../client";
-import { feedQuery, searchQuery } from "../utils/data";
 import Spinner from "./Spinner";
 import { debounce } from "lodash";
 import { getListPost, getSearchListPost } from "../store/actions/postActions";
@@ -23,7 +21,7 @@ const Search = ({ searchTerm, postSearchSelectors }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     debounceDropDown(searchTerm);
-  }, [searchTerm]);
+  }, [debounceDropDown, searchTerm]);
   console.log(postSearchSelectors);
   return (
     <div>
