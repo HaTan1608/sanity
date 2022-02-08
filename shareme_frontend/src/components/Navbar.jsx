@@ -51,7 +51,7 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
               />
               <div className="h-2"></div>
               <ul
-                className="absolute z-10 bg-white right-0 top-15  w-190 p-4 rounded-lg"
+                className="absolute z-1000 bg-white right-0 top-15  w-190 p-4 rounded-lg"
                 style={openUser ? { display: "block" } : { display: "none" }}
               >
                 <li className="font-semibold text-base cursor-pointer">
@@ -76,7 +76,7 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
               />
               <div className="h-2"></div>
               <ul
-                className="absolute z-10 bg-white right-0 top-15  w-190 p-4 rounded-lg"
+                className="absolute z-1000 bg-white right-0 top-15  w-190 p-4 rounded-lg"
                 style={openUser ? { display: "block" } : { display: "none" }}
               >
                 <li className="font-semibold text-base cursor-pointer ">
