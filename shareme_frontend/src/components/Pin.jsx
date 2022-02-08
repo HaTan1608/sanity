@@ -36,7 +36,7 @@ const Pin = ({
   };
 
   return (
-    <div className="m-2">
+    <div className="m-2 z-5">
       <div
         onMouseEnter={() => setPostHovered(true)}
         onMouseLeave={() => setPostHovered(false)}
@@ -44,7 +44,7 @@ const Pin = ({
         className="relative cursor-zoom-in w-auto hover:shadow-lg rounded-lg overflow-hidden transition-all duration-500 ease-in-out"
       >
         <img
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover z-0"
           alt="user-post"
           src={image}
         />
