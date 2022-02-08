@@ -3,13 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { client } from "../client";
 import { MdDownloadForOffline } from "react-icons/md";
-import { fetchUser } from "../utils/fetchUser";
 const Pin = ({
   pin: { avatar, postedBy, selectedFile: image, _id, save, name },
 }) => {
   const [postHovered, setPostHovered] = useState(false);
   const navigate = useNavigate();
-  const user = fetchUser();
+  const [userData, setUserData] = useState(
+    JSON.parse(localStorage.getItem("profile"))
+  );
+  const user = userData?.result;
   const alreadySaved = !!save?.filter(
     (item) => item.postedBy._id === user?.googleId
   ).length;
