@@ -148,7 +148,7 @@ const Login = ({ location }) => {
               >
                 {isSignup ? "Đăng ký" : "Đăng nhập"}
               </button>
-              <div className=" flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 ">
+              {/*<div className=" flex flex-col justify-center items-center top-0 right-0 left-0 bottom-0 ">
                 <div className="w-full">
                   <GoogleLogin
                     clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
@@ -167,7 +167,7 @@ const Login = ({ location }) => {
                     cookiePolicy="single_host_origin"
                   />
                 </div>
-              </div>
+                    </div>*/}
               <div container justifyContent="flex-end">
                 <div
                   onClick={switchMode}

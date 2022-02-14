@@ -4,6 +4,8 @@ import {
   USER_LOG_OUT,
   USER_SIGN_UP,
   USER_SIGN_UP_SUCCESS,
+  USER_UPDATE,
+  USER_UPDATE_SUCCESS,
 } from "../constants/user";
 
 const initState = {
@@ -39,6 +41,21 @@ const postReducer = (state = initState, action) => {
         load: true,
       };
     case USER_SIGN_UP_SUCCESS:
+      localStorage.setItem(
+        "profile",
+        JSON.stringify({ ...action?.payload?.data })
+      );
+      return {
+        ...state,
+        user: action?.payload?.data,
+        load: false,
+      };
+    case USER_UPDATE:
+      return {
+        ...state,
+        load: true,
+      };
+    case USER_UPDATE_SUCCESS:
       localStorage.setItem(
         "profile",
         JSON.stringify({ ...action?.payload?.data })

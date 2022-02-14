@@ -10,6 +10,10 @@ import { userSelectors } from "../store/selectors/userSelector";
 import { connect } from "react-redux";
 const Home = ({ userSelectors }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
+  const [openModal,setOpenModal] = useState(false);
+  const openModelCallback = (data) => {
+    setOpenModal(data)
+  }
   const scrollRef = useRef(null);
   const { user } = userSelectors;
   useEffect(() => {
@@ -17,6 +21,7 @@ const Home = ({ userSelectors }) => {
   }, []);
   return (
     <div className="bg-pink-100 w-full min-h-screen">
+       {openModal && (<div className="fixed z-100 w-full h-full bg-black opacity-50" onClick={()=>setOpenModal(false)}></div>)}
       <div
         className="flex md:flex-row flex-col transaction-height duration-75 ease-in min-h-100vh"
         style={{ maxWidth: "1280px", margin: "auto" }}
@@ -52,10 +57,10 @@ const Home = ({ userSelectors }) => {
             </div>
           )}
         </div>
-
+       
         <div className="pb-2 flex-1 min-h-screen" ref={scrollRef}>
           <Routes>
-            <Route path="/user-profile/:userId" element={<UserProfile />} />
+            <Route path="/user-profile/:userId" element={<UserProfile openModelCallback={openModelCallback} openModal={openModal}/>} />
             <Route path="/*" element={<Pins user={user && user} />} />
           </Routes>
         </div>

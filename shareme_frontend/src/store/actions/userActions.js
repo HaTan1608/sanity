@@ -4,6 +4,8 @@ import {
   USER_LOG_OUT,
   USER_SIGN_UP,
   USER_SIGN_UP_SUCCESS,
+  USER_UPDATE,
+  USER_UPDATE_SUCCESS,
 } from "../constants/user";
 
 export const userLogout = () => {
@@ -26,7 +28,6 @@ export const userLoginSuccess = (payload) => {
     payload,
   };
 };
-
 export const userSignUp = (payload) => {
   return {
     type: USER_SIGN_UP,
@@ -40,3 +41,19 @@ export const userSignUpSuccess = (payload) => {
     payload,
   };
 };
+
+export const userUpdate = (userId, payload) => {
+  return {
+    type: USER_UPDATE,
+    userId,
+    payload,
+  };
+};
+
+export const userUpdateSuccess = (payload) => {
+  return {
+    type: USER_UPDATE_SUCCESS,
+    payload,
+  };
+};
+

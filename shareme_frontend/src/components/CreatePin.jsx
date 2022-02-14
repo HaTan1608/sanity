@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router";
@@ -20,6 +20,9 @@ const CreatePin = () => {
   const userData = JSON.parse(localStorage.getItem("profile"));
   const user = userData?.result;
   const navigate = useNavigate();
+  if (!user) {
+    navigate("/");
+  }
   const uploadImage = async (e) => {
     const file = e.target.files[0];
     if (
@@ -76,7 +79,6 @@ const CreatePin = () => {
       setTimeout(() => setFields(false), 2000);
     }
   };
-
   return (
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
       {fields && (

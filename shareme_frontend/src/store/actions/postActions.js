@@ -11,6 +11,8 @@ import {
   UPDATE_POST_SUCCESS,
   ADD_COMMENT,
   ADD_COMMENT_SUCCESS,
+  DELETE_POST,
+  DELETE_POST_SUCCESS,
 } from "../constants/posts";
 
 export const getListPost = (payload) => {
@@ -55,10 +57,11 @@ export const getPostByIdSuccess = (payload) => {
   };
 };
 
-export const createPost = (payload) => {
+export const createPost = (payload,navigate) => {
   return {
     type: CREATE_POST,
     payload,
+    navigate
   };
 };
 
@@ -97,5 +100,21 @@ export const addCommentSuccess = (payload) => {
   return {
     type: ADD_COMMENT_SUCCESS,
     payload,
+  };
+};
+
+export const deletePost = (pinId, navigate) => {
+  return {
+    type: DELETE_POST,
+    pinId,
+    navigate,
+  };
+};
+
+export const deletePostSuccess = (pinId, navigate) => {
+  return {
+    type: DELETE_POST_SUCCESS,
+    pinId,
+    navigate,
   };
 };

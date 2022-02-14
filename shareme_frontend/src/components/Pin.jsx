@@ -56,16 +56,16 @@ const Pin = ({
             style={{ height: "100%" }}
           >
             <div className="flex items-center justify-between">
-              <div className="flex gap-2">
+             <div className="flex gap-2">
                 <a
                   href={`${image}?dl=`}
                   download
                   onClick={(e) => e.stopPropagation()}
-                  className="bg-white w-9 h-9 rounded-full flex items-center  justify-center text-dark  text-xl opacity-75  hover:opacity-100 hover:shadow-md  outline-none"
+                  className=" rounded-full flex items-center  justify-center text-dark  text-xl opacity-75  hover:opacity-100 hover:shadow-md  outline-none"
                 >
-                  <MdDownloadForOffline />
+                  {/* <MdDownloadForOffline />*/}
                 </a>
-              </div>
+        </div>
               {alreadySaved ? (
                 <button
                   type="button"
@@ -116,7 +116,7 @@ const Pin = ({
           </div>
         )}
       </div>
-      <Link
+     {/* <Link
         to={`/user-profile/${postedBy?._id}`}
         className="flex gap-2 mt-2 items-center "
       >
@@ -129,7 +129,7 @@ const Pin = ({
           alt="user-profile"
         />
         <p className="font-semibold capitalize">{name}</p>
-      </Link>
+        </Link>*/}
     </div>
   );
 };

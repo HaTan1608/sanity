@@ -8,7 +8,6 @@ API.interceptors.request.use((req) => {
       JSON.parse(localStorage.getItem("profile")).token
     }`;
   }
-  console.log(req);
   return req;
 });
 
@@ -18,9 +17,9 @@ export const fetchPostsByCreator = (name) =>
   API.get(`/api/posts/creator?name=${name}`);
 export const fetchPostsBySearch = (searchQuery) =>
   axios.get(`/api/posts/search?searchQuery=${searchQuery || "none"}`);
-export const createPost = (newPost) => {
+export const createPost = (newPost) => 
   API.post("/api/posts", newPost);
-};
+;
 export const likePost = (id) => API.patch(`/api/posts/${id}/likePost`);
 export const comment = (id, value) => {
   console.log(value);
@@ -33,3 +32,5 @@ export const deletePost = (id) => API.delete(`/api/posts/${id}`);
 
 export const signIn = (formData) => API.post("/api/user/signin", formData);
 export const signUp = (formData) => API.post("/api/user/signup", formData);
+
+export const userUpdate = (id, updatedUser) => API.patch(`/api/user/${id}`, updatedUser);

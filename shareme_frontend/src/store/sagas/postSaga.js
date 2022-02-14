@@ -2,6 +2,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import {
   comment,
   createPost,
+  deletePost,
   fetchPost,
   fetchPosts,
   fetchPostsBySearch,
@@ -10,6 +11,7 @@ import {
 import {
   addCommentSuccess,
   createPostSuccess,
+  deletePostSuccess,
   getListPostSuccess,
   getPostByIdSuccess,
   getSearchListPostSuccess,
@@ -40,10 +42,11 @@ function* getPostByIdSaga({ payload }) {
     console.log(error);
   }
 }
-function* createPostSaga({ payload }) {
+function* createPostSaga({ payload, navigate }) {
   try {
     const data = yield call(createPost, payload);
     yield put(createPostSuccess(data));
+    navigate(`/pin-detail/${data?.data._id}`);
   } catch (error) {
     console.log(error);
   }
@@ -54,6 +57,15 @@ function* updatePostSaga({ navigate, pinId, payload }) {
     const data = yield call(updatePost, pinId, payload);
     yield put(updatePostSuccess(data));
     navigate(`/pin-detail/${pinId}`);
+  } catch (error) {
+    console.log(error);
+  }
+}
+function* deletePostSaga({ pinId, navigate }) {
+  try {
+    const data = yield call(deletePost, pinId);
+    yield put(deletePostSuccess(data));
+    navigate(`/`);
   } catch (error) {
     console.log(error);
   }
@@ -72,5 +84,6 @@ export default function* postSaga() {
   yield takeLatest("GET_POST_BY_ID", getPostByIdSaga);
   yield takeLatest("CREATE_POST", createPostSaga);
   yield takeLatest("UPDATE_POST", updatePostSaga);
+  yield takeLatest("DELETE_POST", deletePostSaga);
   yield takeLatest("ADD_COMMENT", addCommentSaga);
 }

@@ -11,6 +11,8 @@ import {
   UPDATE_POST_SUCCESS,
   ADD_COMMENT,
   ADD_COMMENT_SUCCESS,
+  DELETE_POST_SUCCESS,
+  DELETE_POST,
 } from "../constants/posts";
 
 const initState = {
@@ -75,6 +77,16 @@ const postReducer = (state = initState, action) => {
         ...state,
         load: false,
       };
+      case DELETE_POST:
+        return {
+          ...state,
+          load: true,
+        };
+      case DELETE_POST_SUCCESS:
+        return {
+          ...state,
+          load: false,
+        };
     case ADD_COMMENT:
       return {
         ...state,
