@@ -22,8 +22,7 @@ const likeSchema = new mongoose.Schema(
 const postSchema = mongoose.Schema({
   title: String,
   message: String,
-  name: String,
-  avatar: String,
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   creator: String,
   category: String,
   selectedFile: String,
@@ -36,5 +35,4 @@ const postSchema = mongoose.Schema({
 });
 
 var PostMessage = mongoose.model("PostMessage", postSchema);
-
 export default PostMessage;

@@ -3,10 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { client } from "../client";
 import { MdDownloadForOffline } from "react-icons/md";
+import { savePost } from "../store/actions/userActions";
+import { useDispatch } from "react-redux";
 const Pin = ({
   pin: { avatar, postedBy, selectedFile: image, _id, save, name },
 }) => {
   const [postHovered, setPostHovered] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("profile"))
@@ -15,26 +18,8 @@ const Pin = ({
   const alreadySaved = !!save?.filter(
     (item) => item.postedBy._id === user?.googleId
   ).length;
-  const savePin = (id) => {
-    if (!alreadySaved) {
-      client
-        .patch(id)
-        .setIfMissing({ save: [] })
-        .insert("after", "save[-1]", [
-          {
-            _key: uuidv4(),
-            userId: user?.googleId,
-            postedBy: {
-              _type: "postedBy",
-              _ref: user?.googleId,
-            },
-          },
-        ])
-        .commit()
-        .then(() => {
-          window.location.reload();
-        });
-    }
+  const savePin = (userId,postId) => {
+    dispatch(savePost({userId,postId}))
   };
 
   return (
@@ -71,7 +56,7 @@ const Pin = ({
                   type="button"
                   className="bg-red-500 opacity-70 hover:opacity-100"
                 >
-                  {save?.length} Saved
+                  {save?.length} Đã lưu
                 </button>
               ) : (
                 <button
@@ -79,10 +64,10 @@ const Pin = ({
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outlined-none"
                   onClick={(e) => {
                     e.stopPropagation();
-                    savePin(_id);
+                    savePin(user?._id || "",_id);
                   }}
                 >
-                  Save
+                  Lưu
                 </button>
               )}
             </div>

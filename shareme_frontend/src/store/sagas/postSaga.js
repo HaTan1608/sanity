@@ -5,6 +5,7 @@ import {
   deletePost,
   fetchPost,
   fetchPosts,
+  fetchPostsByCreator,
   fetchPostsBySearch,
   updatePost,
 } from "../api/postsAPI";
@@ -13,14 +14,16 @@ import {
   createPostSuccess,
   deletePostSuccess,
   getListPostSuccess,
+  getPostByCreatorSuccess,
   getPostByIdSuccess,
   getSearchListPostSuccess,
   updatePostSuccess,
 } from "../actions/postActions";
 
-function* getListPostSaga(action) {
+function* getListPostSaga(payload) {
   try {
-    const data = yield call(fetchPosts);
+    console.log(payload)
+    const data = yield call(fetchPosts,payload?.category,payload?.page);
     yield put(getListPostSuccess(data));
   } catch (error) {}
 }
@@ -33,7 +36,15 @@ function* getSearchListPostSaga({ payload }) {
     console.log(error);
   }
 }
-
+function* getPostByCreatorSaga({ payload }) {
+  try {
+    console.log(payload)
+    const data = yield call(fetchPostsByCreator, payload);
+    yield put(getPostByCreatorSuccess(data));
+  } catch (error) {
+    console.log(error);
+  }
+}
 function* getPostByIdSaga({ payload }) {
   try {
     const data = yield call(fetchPost, payload);
@@ -81,6 +92,8 @@ function* addCommentSaga({ pinId, payload }) {
 export default function* postSaga() {
   yield takeLatest("GET_LIST_POST", getListPostSaga);
   yield takeLatest("GET_SEARCH_LIST_POST", getSearchListPostSaga);
+  yield takeLatest("GET_POST_BY_CREATOR", getPostByCreatorSaga);
+
   yield takeLatest("GET_POST_BY_ID", getPostByIdSaga);
   yield takeLatest("CREATE_POST", createPostSaga);
   yield takeLatest("UPDATE_POST", updatePostSaga);

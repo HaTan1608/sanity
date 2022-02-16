@@ -6,6 +6,10 @@ import {
   USER_SIGN_UP_SUCCESS,
   USER_UPDATE,
   USER_UPDATE_SUCCESS,
+  SAVE_POST,
+  SAVE_POST_SUCCESS,
+  GET_SAVE_POST,
+  GET_SAVE_POST_SUCCESS,
 } from "../constants/user";
 
 export const userLogout = () => {
@@ -57,3 +61,31 @@ export const userUpdateSuccess = (payload) => {
   };
 };
 
+export const savePost = (payload) => {
+  return {
+    type: SAVE_POST,
+    payload,
+  };
+};
+
+export const savePostSuccess = (payload) => {
+  return {
+    type: SAVE_POST_SUCCESS,
+    payload,
+  };
+};
+
+
+export const getSavePost = (payload) => {
+  return {
+    type: GET_SAVE_POST,
+    payload,
+  };
+};
+
+export const getSavePostSuccess = (payload) => {
+  return {
+    type: GET_SAVE_POST_SUCCESS,
+    payload,
+  };
+};

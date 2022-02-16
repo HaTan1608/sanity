@@ -34,7 +34,7 @@ const Sidebar = ({ closeToggle }) => {
             onClick={handleCloseSidebar}
           >
             <RiHomeFill />
-            Home
+            Tất cả
           </NavLink>
           {categories.slice(0, categories.length - 1).map((category) => (
             <NavLink

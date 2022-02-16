@@ -12,17 +12,18 @@ API.interceptors.request.use((req) => {
 });
 
 export const fetchPost = (id) => API.get(`/api/posts/${id}`);
-export const fetchPosts = (page) => API.get(`/api/posts?page=${page || 1}`);
-export const fetchPostsByCreator = (name) =>
-  API.get(`/api/posts/creator?name=${name}`);
+export const fetchPosts = (category,page) => API.get(`/api/posts?category=${category}&page=${page || 1}`);
+export const fetchPostsByCreator = (id) =>
+  API.get(`/api/posts/creator?id=${id}`);
 export const fetchPostsBySearch = (searchQuery) =>
   axios.get(`/api/posts/search?searchQuery=${searchQuery || "none"}`);
 export const createPost = (newPost) => 
   API.post("/api/posts", newPost);
 ;
+
+export const savePost = (data) => { console.log(data); API.post(`/api/user/save?userId=${data?.userId}&postId=${data?.postId}`)}
 export const likePost = (id) => API.patch(`/api/posts/${id}/likePost`);
 export const comment = (id, value) => {
-  console.log(value);
   API.post(`/api/posts/${id}/commentPost`, { value });
 };
 export const updatePost = (id, updatedPost) => {

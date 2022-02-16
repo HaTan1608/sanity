@@ -14,16 +14,18 @@ import { client } from "../client";
 import MasonryLayout from "./Masonry";
 import Spinner from "./Spinner";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { userUpdate } from "../store/actions/userActions";
+import { getPostByCreator } from "../store/actions/postActions";
+import { postSearchSelectors } from "../store/selectors/postSelector";
 
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none z-0";
 const notActiveBtnStyles =
   "bg-primary mr-4 text-black font-bold p-2 rounded-full w-20 outline-none z-0";
 
-const UserProfile = ({ openModelCallback, openModal }) => {
-  const [pins, setPins] = useState();
+const UserProfile = ({ openModelCallback, openModal,postSearchSelectors}) => {
+  const pins =postSearchSelectors?.posts || [];
   const [text, setText] = useState("Created");
   const [activeBtn, setActiveBtn] = useState("created");
   const dispatch = useDispatch();
@@ -107,16 +109,11 @@ const UserProfile = ({ openModelCallback, openModal }) => {
   };
   useEffect(() => {
     if (text === "Created") {
-      const createdPinsQuery = userCreatedPinsQuery(userId);
-
-      client.fetch(createdPinsQuery).then((data) => {
-        setPins(data);
-      });
+      dispatch(getPostByCreator(userId))
     } else {
       const savedPinsQuery = userSavedPinsQuery(userId);
 
       client.fetch(savedPinsQuery).then((data) => {
-        setPins(data);
       });
     }
   }, [dispatch,text, userId]);
@@ -353,7 +350,11 @@ const UserProfile = ({ openModelCallback, openModal }) => {
         </div>
 
         <div className="px-2">
+          {pins.length >0 && (
+
           <MasonryLayout pins={pins} />
+
+          )}
         </div>
 
         {pins?.length === 0 && (
@@ -366,4 +367,9 @@ const UserProfile = ({ openModelCallback, openModal }) => {
   );
 };
 
-export default UserProfile;
+function mapStateToProps(state) {
+  return {
+    postSearchSelectors: postSearchSelectors(state),
+  };
+}
+export default connect(mapStateToProps)(UserProfile);

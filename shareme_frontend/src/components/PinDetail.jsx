@@ -19,7 +19,6 @@ const PinDetail = ({ postSearchSelectors }) => {
   const navigate = useNavigate();
   const { posts: pins, post: pinDetail } = postSearchSelectors;
   const user = JSON.parse(localStorage.getItem("profile"))?.result;
-  console.log(user?._id, pinDetail.creator);
   const comments = pinDetail?.comments || [];
   const [moreHoverd, setMoreHoverd] = useState(false);
   const handleAddComment = () => {
@@ -124,12 +123,12 @@ const PinDetail = ({ postSearchSelectors }) => {
             <img
               className="w-8 h-8 rounded-full object-cover"
               src={
-                pinDetail?.avatar ||
+                pinDetail?.user?.avatar ||
                 "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
               }
               alt="user-profile"
             />
-            <p className="font-semibold capitalize">{pinDetail?.name}</p>
+            <p className="font-semibold capitalize">{pinDetail?.user?.name}</p>
           </Link>
           <h2 className="mt-5 text-2xl">Bình luận</h2>
           <div className="max-h-370 overflow-y-auto mt-1">

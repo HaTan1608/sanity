@@ -2,22 +2,33 @@ import express from "express";
 import mongoose from "mongoose";
 
 import PostMessage from "../models/postMessage.js";
+import User from "../models/user.js";
 
 const router = express.Router();
 
 export const getPosts = async (req, res) => {
-  const { page } = req.query;
+  const { page,category } = req.query;
 
   try {
     const LIMIT = 108;
     const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every page
 
     const total = await PostMessage.countDocuments({});
-    const posts = await PostMessage.find()
+    let posts = [];
+    if(category === ""){
+       posts = await PostMessage.find()
       .sort({ _id: -1 })
       .limit(LIMIT)
       .skip(startIndex);
 
+    }else{
+      posts = await PostMessage.find({category})
+      .sort({ _id: -1 })
+      .limit(LIMIT)
+      .skip(startIndex);
+
+    }
+  
     res.json({
       data: posts,
       currentPage: Number(page),
@@ -30,7 +41,7 @@ export const getPosts = async (req, res) => {
 
 export const getPostsBySearch = async (req, res) => {
   const { searchQuery } = req.query;
-
+  
   try {
     const title = new RegExp(searchQuery, "i");
 
@@ -41,25 +52,24 @@ export const getPostsBySearch = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-  
+
 export const getPostsByCreator = async (req, res) => {
-  const { name } = req.query;
+  const { id } = req.query;
 
   try {
-    const posts = await PostMessage.find({ name });
+    const posts = await PostMessage.find({ creator:id });
 
     res.json({ data: posts });
   } catch (error) {
     res.status(404).json({ message: error.message });
-  }  
+  }
 };
 
 export const getPost = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const post = await PostMessage.findById(id);
-    console.log(post);
+    const post = await PostMessage.findById(id).populate('user');
     res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -70,14 +80,12 @@ export const createPost = async (req, res) => {
   const post = req.body?.postData;
   const newPostMessage = new PostMessage({
     ...post,
-    creator: req.userId,
-
+    user: req.userId,
     createdAt: new Date().toISOString(),
   });
 
   try {
     await newPostMessage.save();
-
     res.status(201).json(newPostMessage);
   } catch (error) {
     res.status(409).json({ message: error.message });

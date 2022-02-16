@@ -7,6 +7,8 @@ const userSchema = mongoose.Schema({
   id: { type: String },
   avatar: { type: String },
   wallpaper: { type: String },
+  saved: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PostMessage' }],
+  
 });
 
 var User = mongoose.model("User", userSchema);

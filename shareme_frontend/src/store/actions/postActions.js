@@ -13,12 +13,15 @@ import {
   ADD_COMMENT_SUCCESS,
   DELETE_POST,
   DELETE_POST_SUCCESS,
+  GET_POST_BY_CREATOR,
+  GET_POST_BY_CREATOR_SUCCESS,
 } from "../constants/posts";
 
-export const getListPost = (payload) => {
+export const getListPost = (category, page) => {
   return {
     type: GET_LIST_POST,
-    payload,
+    category,
+    page,
   };
 };
 
@@ -42,7 +45,19 @@ export const getSearchListPostSuccess = (payload) => {
     payload,
   };
 };
+export const getPostByCreator = (payload) => {
+  return {
+    type: GET_POST_BY_CREATOR,
+    payload,
+  };
+};
 
+export const getPostByCreatorSuccess = (payload) => {
+  return {
+    type: GET_POST_BY_CREATOR_SUCCESS,
+    payload,
+  };
+};
 export const getPostById = (payload) => {
   return {
     type: GET_POST_BY_ID,
@@ -57,11 +72,11 @@ export const getPostByIdSuccess = (payload) => {
   };
 };
 
-export const createPost = (payload,navigate) => {
+export const createPost = (payload, navigate) => {
   return {
     type: CREATE_POST,
     payload,
-    navigate
+    navigate,
   };
 };
 

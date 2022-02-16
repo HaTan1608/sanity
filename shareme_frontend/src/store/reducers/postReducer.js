@@ -13,6 +13,8 @@ import {
   ADD_COMMENT_SUCCESS,
   DELETE_POST_SUCCESS,
   DELETE_POST,
+  GET_POST_BY_CREATOR,
+  GET_POST_BY_CREATOR_SUCCESS,
 } from "../constants/posts";
 
 const initState = {
@@ -46,12 +48,27 @@ const postReducer = (state = initState, action) => {
         posts: action?.payload?.data?.data,
         load: false,
       };
+      
+      case GET_POST_BY_CREATOR:
+        return {
+          ...state,
+          load: true,
+        };
+      case GET_POST_BY_CREATOR_SUCCESS:
+        return {
+          ...state,
+          posts: action?.payload?.data?.data,
+          load: false,
+        };
     case GET_POST_BY_ID:
+
+    
       return {
         ...state,
         load: true,
       };
     case GET_POST_BY_ID_SUCCESS:
+      console.log(action?.payload?.data)
       return {
         ...state,
         post: action?.payload?.data,

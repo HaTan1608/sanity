@@ -1,4 +1,6 @@
 import {
+  SAVE_POST,
+  SAVE_POST_SUCCESS,
   USER_LOG_IN,
   USER_LOG_IN_SUCCESS,
   USER_LOG_OUT,
@@ -65,6 +67,16 @@ const postReducer = (state = initState, action) => {
         user: action?.payload?.data,
         load: false,
       };
+      case SAVE_POST:
+        return {
+          ...state,
+          load:true,
+        }
+        case SAVE_POST_SUCCESS:
+          return {
+            ...state,
+            load:false,
+          }
     default:
       return state;
   }

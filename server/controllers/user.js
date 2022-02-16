@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 
 import User from "../models/user.js";
+import PostMessage from "../models/postMessage.js";
 
 const secret = "test";
 
@@ -30,7 +31,7 @@ export const signin = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
-
+ 
 export const signup = async (req, res) => {
   const { email, password, firstName, lastName } = req.body;
 
@@ -46,6 +47,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       name: `${firstName} ${lastName}`,
+      saved:[],
     });
 
     const token = jwt.sign({ email: result.email, id: result._id }, secret, {
@@ -63,7 +65,6 @@ export const signup = async (req, res) => {
 export const updateUser = async (req, res) => {
   const { id } = req.params;
   const { email,name, avatar, wallpaper } = req.body?.userData;
-  console.log( email,name, avatar, wallpaper )
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
@@ -80,4 +81,32 @@ export const updateUser = async (req, res) => {
   });
   console.log(oldUser)
   res.status(200).json({ result: oldUser, token });
+};
+
+
+export const savePost = async (req, res) => {
+  const {userId,postId} = req.query;
+  console.log(userId,postId)
+  const user = await User.findById(userId);
+
+
+  user.saved.push(postId);
+
+  const updatedUser = await User.findByIdAndUpdate(userId, user, {
+    new: true,
+  });
+  res.status(200).json({ result: updatedUser });
+};
+
+
+
+export const getSavePost = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id).populate('saved');
+    res.status(200).json({ result: user });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
 };
