@@ -31,7 +31,7 @@ export const signin = async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 };
- 
+
 export const signup = async (req, res) => {
   const { email, password, firstName, lastName } = req.body;
 
@@ -47,7 +47,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       name: `${firstName} ${lastName}`,
-      saved:[],
+      saved: [],
     });
 
     const token = jwt.sign({ email: result.email, id: result._id }, secret, {
@@ -64,7 +64,7 @@ export const signup = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { email,name, avatar, wallpaper } = req.body?.userData;
+  const { email, name, avatar, wallpaper } = req.body?.userData;
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
@@ -79,32 +79,34 @@ export const updateUser = async (req, res) => {
   const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
     expiresIn: "1h",
   });
-  console.log(oldUser)
+  console.log(oldUser);
   res.status(200).json({ result: oldUser, token });
 };
 
-
 export const savePost = async (req, res) => {
-  const {userId,postId} = req.query;
-  console.log(userId,postId)
-  const user = await User.findById(userId);
+  const { userId, postId } = req.query;
+  const user = await User.findById(userId).populate("saved");
+  const alreadySaved = user.saved.filter(
+    (post) => post._id.toString() === postId
+  );
+  if (alreadySaved.length>0) {
+    console.log('1')
 
-
-  user.saved.push(postId);
-
+    alreadySaved.map((post) => user.saved.remove(post));
+  } else {
+    console.log('2')
+    user.saved.push(postId);
+  }
   const updatedUser = await User.findByIdAndUpdate(userId, user, {
     new: true,
   });
   res.status(200).json({ result: updatedUser });
 };
 
-
-
 export const getSavePost = async (req, res) => {
-  const { id } = req.params;
-
+  const { userId } = req.query;
   try {
-    const user = await User.findById(id).populate('saved');
+    const user = await User.findById(userId).populate("saved");
     res.status(200).json({ result: user });
   } catch (error) {
     res.status(404).json({ message: error.message });

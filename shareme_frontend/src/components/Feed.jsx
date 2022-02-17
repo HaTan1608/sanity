@@ -3,17 +3,25 @@ import { connect, useDispatch } from "react-redux";
 import { useParams } from "react-router";
 
 import { getListPost } from "../store/actions/postActions";
+import { getSavePost } from "../store/actions/userActions";
 import { postSearchSelectors } from "../store/selectors/postSelector";
 import MasonryLayout from "./Masonry";
 import Spinner from "./Spinner";
 const Feed = ({ postSearchSelectors }) => {
-  const {categoryId} = useParams();
-  const category  = categoryId || "";
-  console.log(category)
+  const { categoryId } = useParams();
+  const category = categoryId || "";
+  const userData = JSON.parse(localStorage.getItem("profile"));
+  const user = userData?.result;
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getListPost(category));
-  }, [dispatch,category]);
+  }, [dispatch, category]);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getSavePost(user._id));
+    }
+  }, []);
   const { load: loading, posts: pins } = postSearchSelectors;
   if (loading)
     return (

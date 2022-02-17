@@ -1,11 +1,12 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import {
+  getSavePostSuccess,
   savePostSuccess,
   userLoginSuccess,
   userSignUpSuccess,
   userUpdateSuccess,
 } from "../actions/userActions";
-import { savePost, signIn, signUp, userUpdate } from "../api/postsAPI";
+import { fetchSavePost, savePost, signIn, signUp, userUpdate } from "../api/postsAPI";
 
 function* userLoginSaga({ payload }) {
   try {
@@ -39,9 +40,19 @@ function* savePostSaga({payload}) {
     yield put(savePostSuccess(data));
   } catch (error) {}
 }
+
+
+function* getSavePostSaga({payload}) {
+  console.log("save",payload);
+  try {
+    const data = yield call(fetchSavePost,payload);
+    yield put(getSavePostSuccess(data));
+  } catch (error) {}
+}
 export default function* postSaga() {
   yield takeLatest("USER_LOG_IN", userLoginSaga);
   yield takeLatest("SAVE_POST", savePostSaga);
+  yield takeLatest("GET_SAVE_POST", getSavePostSaga);
 
   yield takeLatest("USER_SIGN_UP", userSignUpSaga);
   yield takeLatest("USER_UPDATE", userUpdateSaga);

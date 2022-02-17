@@ -15,17 +15,22 @@ import MasonryLayout from "./Masonry";
 import Spinner from "./Spinner";
 import axios from "axios";
 import { connect, useDispatch } from "react-redux";
-import { userUpdate } from "../store/actions/userActions";
+import { getSavePost, userUpdate } from "../store/actions/userActions";
 import { getPostByCreator } from "../store/actions/postActions";
 import { postSearchSelectors } from "../store/selectors/postSelector";
+import { userSelectors } from "../store/selectors/userSelector";
 
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none z-0";
 const notActiveBtnStyles =
   "bg-primary mr-4 text-black font-bold p-2 rounded-full w-20 outline-none z-0";
 
-const UserProfile = ({ openModelCallback, openModal,postSearchSelectors}) => {
-  const pins =postSearchSelectors?.posts || [];
+const UserProfile = ({
+  openModelCallback,
+  openModal,
+  postSearchSelectors,
+  userSelectors,
+}) => {
   const [text, setText] = useState("Created");
   const [activeBtn, setActiveBtn] = useState("created");
   const dispatch = useDispatch();
@@ -40,7 +45,9 @@ const UserProfile = ({ openModelCallback, openModal,postSearchSelectors}) => {
   const [name, setName] = useState(user?.name);
   //
   const [loadingWallpaper, setLoadingWallpaper] = useState(false);
-  const [imageAssetWallpaper, setImageAssetWallpaper] = useState(user?.wallpaper);
+  const [imageAssetWallpaper, setImageAssetWallpaper] = useState(
+    user?.wallpaper
+  );
   const [wrongImageWallpaperType, setWrongImageWallpaperType] = useState(null);
   if (!user) {
     navigate("/");
@@ -107,22 +114,24 @@ const UserProfile = ({ openModelCallback, openModal,postSearchSelectors}) => {
       setWrongImageAvatarType(true);
     }
   };
-  useEffect(() => {
-    if (text === "Created") {
-      dispatch(getPostByCreator(userId))
-    } else {
-      const savedPinsQuery = userSavedPinsQuery(userId);
 
-      client.fetch(savedPinsQuery).then((data) => {
-      });
+  const [pins, setPins] = useState([]);
+  const [savedPins, setSavedPins] = useState([]);
+  useEffect(() => {
+    if (text === "Created" ) {
+      dispatch(getPostByCreator(userId));
+      setPins(postSearchSelectors?.posts || []);
+    } else {
+      dispatch(getSavePost(userId));
+      setSavedPins(userSelectors?.savedPosts || []);
     }
-  }, [dispatch,text, userId]);
+  }, [dispatch, text, userId]);
 
   const handleSubmit = () => {
     dispatch(
       userUpdate(userId, {
         userData: {
-          email:user?.email,
+          email: user?.email,
           name: name,
           avatar: imageAssetAvatar,
           wallpaper: imageAssetWallpaper,
@@ -136,7 +145,11 @@ const UserProfile = ({ openModelCallback, openModal,postSearchSelectors}) => {
 
     navigate("/login");
   };
-
+  const deleteCallback = (data, postId) => {
+    if (data === true && text !== "Created") {
+      setSavedPins(pins.filter((pin) => pin._id !== postId));
+    }
+  };
   if (!user) return <Spinner message="Loading profile" />;
 
   return (
@@ -350,18 +363,22 @@ const UserProfile = ({ openModelCallback, openModal,postSearchSelectors}) => {
         </div>
 
         <div className="px-2">
-          {pins.length >0 && (
-
-          <MasonryLayout pins={pins} />
-
+          {text === "Created" ? (
+            pins.length > 0 ? (
+              <MasonryLayout pins={pins}  deleteCallback={deleteCallback} />
+            ) : (
+              <div className="flex justify-center font-bold items-center w-full text-1xl mt-2">
+                No Pins Found!
+              </div>
+            )
+          ) : savedPins.length > 0 ? (
+            <MasonryLayout pins={savedPins} deleteCallback={deleteCallback} />
+          ) : (
+            <div className="flex justify-center font-bold items-center w-full text-1xl mt-2">
+              No Pins Found!
+            </div>
           )}
         </div>
-
-        {pins?.length === 0 && (
-          <div className="flex justify-center font-bold items-center w-full text-1xl mt-2">
-            No Pins Found!
-          </div>
-        )}
       </div>
     </div>
   );
@@ -369,6 +386,7 @@ const UserProfile = ({ openModelCallback, openModal,postSearchSelectors}) => {
 
 function mapStateToProps(state) {
   return {
+    userSelectors: userSelectors(state),
     postSearchSelectors: postSearchSelectors(state),
   };
 }

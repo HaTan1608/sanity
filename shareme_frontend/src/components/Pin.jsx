@@ -1,27 +1,36 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate ,useLocation} from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { client } from "../client";
 import { MdDownloadForOffline } from "react-icons/md";
-import { savePost } from "../store/actions/userActions";
-import { useDispatch } from "react-redux";
+import { getSavePost, savePost } from "../store/actions/userActions";
+import { connect, useDispatch } from "react-redux";
+import { userSelectors } from "../store/selectors/userSelector";
+import Spinner from "./Spinner";
 const Pin = ({
-  pin: { avatar, postedBy, selectedFile: image, _id, save, name },
+  pin: { avatar, postedBy, selectedFile: image, _id, name },
+  userSelectors,
+  deleteCallback,
 }) => {
   const [postHovered, setPostHovered] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [userData, setUserData] = useState(
     JSON.parse(localStorage.getItem("profile"))
   );
   const user = userData?.result;
-  const alreadySaved = !!save?.filter(
-    (item) => item.postedBy._id === user?.googleId
-  ).length;
-  const savePin = (userId,postId) => {
-    dispatch(savePost({userId,postId}))
+  const save = userSelectors?.savedPosts || [];
+  const [alreadySaved, setAlreadySaved] = useState(
+    !!save?.filter((item) => item._id === _id).length
+  );
+  const savePin = (userId, postId,deleted) => {
+    dispatch(savePost({ userId, postId }));
+    setAlreadySaved(!alreadySaved);
+    if(location.pathname.slice(1,13)==='user-profile'){
+      deleteCallback(deleted,postId);
+    }
   };
-
   return (
     <div className="m-2 z-5">
       <div
@@ -41,7 +50,7 @@ const Pin = ({
             style={{ height: "100%" }}
           >
             <div className="flex items-center justify-between">
-             <div className="flex gap-2">
+              <div className="flex gap-2">
                 <a
                   href={`${image}?dl=`}
                   download
@@ -50,22 +59,29 @@ const Pin = ({
                 >
                   {/* <MdDownloadForOffline />*/}
                 </a>
-        </div>
+              </div>
               {alreadySaved ? (
                 <button
                   type="button"
-                  className="bg-red-500 opacity-70 hover:opacity-100"
+                  name="save"
+                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outlined-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    savePin(user?._id || "", _id,true);
+                  }}
                 >
-                  {save?.length} Đã lưu
+                  Đã lưu
                 </button>
               ) : (
                 <button
                   type="button"
+                  name="saved"
                   className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outlined-none"
                   onClick={(e) => {
                     e.stopPropagation();
-                    savePin(user?._id || "",_id);
+                    savePin(user?._id || "", _id,false);
                   }}
+
                 >
                   Lưu
                 </button>
@@ -101,7 +117,7 @@ const Pin = ({
           </div>
         )}
       </div>
-     {/* <Link
+      {/* <Link
         to={`/user-profile/${postedBy?._id}`}
         className="flex gap-2 mt-2 items-center "
       >
@@ -118,5 +134,9 @@ const Pin = ({
     </div>
   );
 };
-
-export default Pin;
+function mapStateToProps(state) {
+  return {
+    userSelectors: userSelectors(state),
+  };
+}
+export default connect(mapStateToProps)(Pin);
