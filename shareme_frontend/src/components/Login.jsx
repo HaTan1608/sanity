@@ -124,7 +124,7 @@ const Login = ({ location }) => {
                   onChange={(e) => handleChange(e)}
                   name="password"
                   label="Password"
-                  type={1 ? "text" : "password"}
+                  type="password"
                   placeholder="Mật khẩu"
                   className="p-2 rounded-md w-full mt-2 border-solid border-2 border-sky-500 outline-none"
                 />

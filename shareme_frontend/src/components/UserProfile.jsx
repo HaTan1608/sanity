@@ -295,9 +295,8 @@ const UserProfile = ({
       <div className="flex flex-col pb-5">
         <div className="relative flex flex-col mb-7">
           <div
-            className="flex flex-col justify-center items-center "
+            className="flex flex-col justify-center items-center md:pl-8 "
             style={{
-              paddingLeft: "20px",
               zIndex: 0,
             }}
           >
