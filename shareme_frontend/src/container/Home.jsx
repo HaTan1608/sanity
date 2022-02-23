@@ -21,7 +21,7 @@ const Home = ({ userSelectors }) => {
   }, []);
   return (
     <div className="bg-pink-100 w-full min-h-screen">
-       {openModal && (<div className="fixed z-100 w-full h-full bg-black opacity-50" onClick={()=>setOpenModal(false)}></div>)}
+       {openModal && (<div className="fixed z-50 w-full h-full bg-black opacity-50" onClick={()=>setOpenModal(false)}></div>)}
       <div
         className="flex md:flex-row flex-col transaction-height duration-75 ease-in min-h-100vh"
         style={{ maxWidth: "1280px", margin: "auto" }}

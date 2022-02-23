@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Masonry from "react-masonry-css";
 import Pin from "./Pin";
 

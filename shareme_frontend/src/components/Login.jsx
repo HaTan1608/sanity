@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GoogleLogin from "react-google-login";
 import { useNavigate, useParams } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
@@ -22,7 +22,7 @@ const Login = ({ location }) => {
   const dispatch = useDispatch();
   const history = useNavigate();
   const params = useParams();
-
+  const userData = JSON.parse(localStorage.getItem("profile"));
   const [isSignup, setIsSignup] = useState(params.type === "register");
   const [showPassword, setShowPassword] = useState(false);
   const handleShowPassword = () => setShowPassword(!showPassword);
@@ -45,7 +45,11 @@ const Login = ({ location }) => {
     console.log(e);
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
+  useEffect(()=>{
+    if(userData){
+      navigate("/")
+    }
+  },[userData])
   const responseGoogle = (response) => {
     console.log(response);
     localStorage.setItem("user", JSON.stringify(response.profileObj));
@@ -98,7 +102,6 @@ const Login = ({ location }) => {
                       name="firstName"
                       label="First Name"
                       autoFocus
-                      half
                       placeholder="Họ"
                       className="p-2 rounded-md w-[calc(50%-3px)] border-solid border-2 border-sky-500 outline-none"
                     />
@@ -107,7 +110,6 @@ const Login = ({ location }) => {
                       name="lastName"
                       label="Last Name"
                       placeholder="Tên"
-                      half
                       className="p-2 rounded-md w-[calc(50%-3px)] border-solid border-2 border-sky-500 outline-none"
                     />
                   </div>
@@ -141,7 +143,6 @@ const Login = ({ location }) => {
               </div>
               <button
                 type="submit"
-                fullWidth
                 variant="contained"
                 color="primary"
                 className="p-2 rounded-md w-full mt-2 bg-sky-400 text-white font-semibold "
@@ -168,7 +169,7 @@ const Login = ({ location }) => {
                   />
                 </div>
                     </div>*/}
-              <div container justifyContent="flex-end">
+              <div>
                 <div
                   onClick={switchMode}
                   className="text-white text-semibold text-right mt-2"

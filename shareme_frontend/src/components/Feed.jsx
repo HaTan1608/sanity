@@ -23,6 +23,7 @@ const Feed = ({ postSearchSelectors }) => {
     }
   }, []);
   const { load: loading, posts: pins } = postSearchSelectors;
+
   if (loading)
     return (
       <div style={{ marginTop: "100px" }}>

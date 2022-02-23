@@ -44,10 +44,10 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
               <img
                 src={
                   user?.avatar ||
-                  "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+                "https://shareme-bucket.s3.amazonaws.com/avatar.jpeg"
                 }
                 alt="user"
-                className="w-14 h-12 rounded-lg "
+                className="w-14 h-12 rounded-full"
               />
               <div className="h-2"></div>
               <ul

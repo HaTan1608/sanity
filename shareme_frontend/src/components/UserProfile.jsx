@@ -302,7 +302,7 @@ const UserProfile = ({
           >
             <img
               className=" w-full h-370 2xl:h-510 shadow-lg object-cover"
-              src={user?.wallpaper}
+              src={user?.wallpaper || "https://shareme-bucket.s3.amazonaws.com/wallpaper.jpeg"}
               alt="user-pic"
               style={{
                 borderBottomRightRadius: "8px",
@@ -313,7 +313,7 @@ const UserProfile = ({
             />
             <img
               className="rounded-full w-20 h-20 -mt-10 shadow-xl object-cover"
-              src={user?.avatar}
+              src={user?.avatar || "https://shareme-bucket.s3.amazonaws.com/avatar.jpeg"}
               alt="user-pic"
               style={{
                 zIndex: 1,

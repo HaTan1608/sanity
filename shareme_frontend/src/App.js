@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import Login from "./components/Login";
 import Home from "./container/Home";
-
+import AnimationsProvider from "./context/providers/AnimationsProvider";
 const App = () => {
   const location = useLocation();
   const [mainLocation, setMainLocation] = useState("");
@@ -22,13 +22,15 @@ const App = () => {
   }, [location]);
 
   return (
-    <Routes>
-      <Route
-        path="/account/:type"
-        element={<Login location={mainLocation} />}
-      />
-      <Route path="/*" element={<Home />} />
-    </Routes>
+    <AnimationsProvider>
+      <Routes>
+        <Route
+          path="/account/:type"
+          element={<Login location={mainLocation} />}
+        />
+        <Route path="/*" element={<Home />} />
+      </Routes>
+    </AnimationsProvider>
   );
 };
 

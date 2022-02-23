@@ -31,8 +31,9 @@ const Pin = ({
       deleteCallback(deleted,postId);
     }
   };
+  console.log(document.getElementsByName)
   return (
-    <div className="m-2 z-5">
+    <div className="m-2 z-5 animation">
       <div
         onMouseEnter={() => setPostHovered(true)}
         onMouseLeave={() => setPostHovered(false)}

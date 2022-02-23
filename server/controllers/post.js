@@ -54,7 +54,7 @@ export const getPostsBySearch = async (req, res) => {
 };
 
 export const getPostsByCreator = async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.query; 
 
   try {
     const posts = await PostMessage.find({ creator:id });
