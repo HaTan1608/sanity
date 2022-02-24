@@ -33,19 +33,19 @@ app.get("*", (req, res) =>
 mongoose.connect(CONNECTION_URL, {});
 
 const httpServer = http.Server(app);
-const io = new Server(httpServer, { cors: { origin: "*" } });
+const io = new Server(httpServer, { cors: { origin: '*' } });
 const messages = [];
-io.on("connection", (socket) => {
-  socket.on("send-comments", (comment) => {
-    console.log(comment);
-    socket.broadcast.emit("receive-comments", comment);
-  });
+io.on('connection',(socket)=>{
+  socket.on('send-comments',comment=>{
+    socket.broadcast.emit('receive-comments',comment)
+  })
 
-  socket.on("onMessage", (message) => {
-    socket.broadcast.emit("message", message);
+  socket.on('onMessage', message => {
+    socket.broadcast.emit('message', message);
+
     messages.push(message);
-  });
 });
+})
 
 httpServer.listen(PORT, () => {
   console.log(`Serve at http://localhost:${PORT}`);

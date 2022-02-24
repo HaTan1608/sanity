@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MdDownloadForOffline, MdMoreHoriz } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
@@ -12,28 +12,65 @@ import {
 } from "../store/actions/postActions";
 import { connect, useDispatch } from "react-redux";
 import { postSearchSelectors } from "../store/selectors/postSelector";
-const PinDetail = ({ postSearchSelectors }) => {
+
+let allMessages = [];
+const PinDetail = ({ postSearchSelectors, mainSocket }) => {
   const [comment, setComment] = useState("");
   const { pinId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [socket, setSocket] = useState(null);
+  const [messages, setMessages] = useState([]);
   const { posts: pins, post: pinDetail } = postSearchSelectors;
   const user = JSON.parse(localStorage.getItem("profile"))?.result;
   const comments = pinDetail?.comments || [];
   const [moreHoverd, setMoreHoverd] = useState(false);
-  const handleAddComment = () => {
-    comments.push({ comment: comment, name: user?.name, avatar: user?.avatar });
-    dispatch(
-      addComment(pinId, { comment, name: user?.name, avatar: user?.avatar })
-    );
-    setComment("");
-  };
+  const commentsRef = useRef();
 
   const handleDeletePost = () => {
     dispatch(deletePost(pinId, navigate));
   };
+  const scrollToBottom = () => {
+    var div = document.getElementById("comments");
+    div.scroll({ top: div.scrollHeight, behavior: "smooth" });
+  };
+  useEffect(() => {
+    if (!socket) {
+      const sk = mainSocket;
+      setSocket(sk);
+
+      sk.on("message", (data) => {
+        allMessages = [...allMessages, data];
+        setMessages(allMessages);
+      });
+    }
+    scrollToBottom();
+  }, [messages, socket]);
+
+  const handleComment = async (e) => {
+    await dispatch(
+      addComment(pinId, { comment, name: user?.name, avatar: user?.avatar })
+    );
+    allMessages = [
+      ...allMessages,
+      { name: user?.name, avatar: user?.avatar, comment: comment },
+    ];
+
+    setComment("");
+    setTimeout(() => {
+      socket.emit("onMessage", {
+        name: user?.name,
+        avatar: user?.avatar,
+        comment: comment,
+      });
+      setMessages(allMessages);
+    }, 1000);
+    scrollToBottom();
+  };
   useEffect(() => {
     dispatch(getPostById(pinId));
+    scrollToBottom();
+
     window.scrollTo({
       top: 0,
       behavior: "smooth", // for smoothly scrolling
@@ -52,6 +89,9 @@ const PinDetail = ({ postSearchSelectors }) => {
         className="flex xl-flex-row flex-col m-auto bg-white xl:flex-row mt-5"
         style={{ maxWidth: "1500px", borderRadius: "16px" }}
       >
+        <div onClick={() => console.log(messages, allMessages)}>
+          sdfdsafdasfas
+        </div>
         <div
           className="flex justify-center items-center md:items-start flex-initial xl:w-3/5 xl:max-h-[calc(100vh-120px)] rounded-lg  xl:rounded-l-lg"
           style={{
@@ -131,7 +171,11 @@ const PinDetail = ({ postSearchSelectors }) => {
             <p className="font-semibold capitalize">{pinDetail?.user?.name}</p>
           </Link>
           <h2 className="mt-5 text-2xl">Bình luận</h2>
-          <div className="max-h-370 overflow-y-auto mt-1">
+          <div
+            className="max-h-370 overflow-y-auto mt-1"
+            id="comments"
+            ref={commentsRef}
+          >
             {comments?.map((comment, index) => (
               <div
                 className="flex gap-2 mt-1 items-center bg-white rounded-lg"
@@ -151,11 +195,31 @@ const PinDetail = ({ postSearchSelectors }) => {
                 </div>
               </div>
             ))}
+            {messages?.map((comment, index) => (
+              <div
+                className="flex gap-2 mt-1 items-center bg-white rounded-lg"
+                key={index}
+              >
+                <img
+                  src={
+                    comment?.avatar ||
+                    "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
+                  }
+                  alt="user-profile"
+                  className="w-8 h-8 rounded-full cursor-pointer object-cover"
+                />
+                <div className="flex flex-row w-full">
+                  <p className="font-bold">{comment?.name}</p>
+                  <p className="ml-4">{comment?.comment}</p>
+                </div>
+              </div>
+            ))}
           </div>
+
           <div className="flex flex-wrap mt-6 gap-3">
             <Link to={`/user-profile/${user?._id}`}>
               <img
-                className="w-10 h-10 rounded-full cursor-pointer"
+                className="w-10 h-10 rounded-full cursor-pointer object-cover"
                 src={
                   user?.avatar ||
                   "https://genvita.vn/resources/avatar/222a5011-fb0b-4457-a66d-65b8924b560c?width=119&height=119&mode=crop"
@@ -172,7 +236,7 @@ const PinDetail = ({ postSearchSelectors }) => {
             <button
               type="button"
               className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none"
-              onClick={() => handleAddComment()}
+              onClick={() => handleComment()}
             >
               Gửi
             </button>

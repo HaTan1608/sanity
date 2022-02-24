@@ -10,7 +10,6 @@ const secret = "test";
 
 export const signin = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
   try {
     const oldUser = await User.findOne({ email });
 
@@ -90,11 +89,8 @@ export const savePost = async (req, res) => {
     (post) => post._id.toString() === postId
   );
   if (alreadySaved.length>0) {
-    console.log('1')
-
     alreadySaved.map((post) => user.saved.remove(post));
   } else {
-    console.log('2')
     user.saved.push(postId);
   }
   const updatedUser = await User.findByIdAndUpdate(userId, user, {

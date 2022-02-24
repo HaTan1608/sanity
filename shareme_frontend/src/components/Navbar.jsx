@@ -47,7 +47,7 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
                 "https://shareme-bucket.s3.amazonaws.com/avatar.jpeg"
                 }
                 alt="user"
-                className="w-14 h-12 rounded-full"
+                className="w-14 h-12 rounded-full object-cover"
               />
               <div className="h-2"></div>
               <ul

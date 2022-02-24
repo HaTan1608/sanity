@@ -8,7 +8,7 @@ import {
   Search,
   EditPin,
 } from "../components";
-const Pins = ({ user }) => {
+const Pins = ({ user,mainSocket }) => {
   const [searchTerm, setSearchTerm] = useState("");
   return (
     <div className="px-2 md:px-5">
@@ -25,7 +25,7 @@ const Pins = ({ user }) => {
           <Route path="/category/:categoryId" element={<Feed />} />
           <Route
             path="/pin-detail/:pinId"
-            element={<PinDetail user={user} />}
+            element={<PinDetail user={user} mainSocket={mainSocket}/>}
           />
           <Route path="/create-pin" element={<CreatePin user={user} />} />
           <Route path="/edit-pin/:pinId" element={<EditPin />} />
